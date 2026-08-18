@@ -8,56 +8,67 @@ def create_animation():
     
     W, H = 840, 480
     NUM_FRAMES = 60
-    FPS = 20
-    DURATION = int(1000 / FPS)  # 50 ms per frame = 3.0 second seamless loop
+    FPS = 15
+    DURATION = int(1000 / FPS)  # 66 ms per frame = 4.0 second relaxed, smooth loop
     
-    # Fonts from Windows system directory
+    # Fonts
     font_title = ImageFont.truetype('C:/Windows/Fonts/segoeuib.ttf', 16)
     font_sub = ImageFont.truetype('C:/Windows/Fonts/segoeui.ttf', 12)
-    font_mono = ImageFont.truetype('C:/Windows/Fonts/consola.ttf', 12)
-    font_mono_small = ImageFont.truetype('C:/Windows/Fonts/consola.ttf', 10)
+    font_mono = ImageFont.truetype('C:/Windows/Fonts/consola.ttf', 11)
+    font_mono_small = ImageFont.truetype('C:/Windows/Fonts/consola.ttf', 9)
     font_mono_bold = ImageFont.truetype('C:/Windows/Fonts/consolab.ttf', 12)
     font_badge = ImageFont.truetype('C:/Windows/Fonts/segoeuib.ttf', 11)
     font_btn = ImageFont.truetype('C:/Windows/Fonts/segoeuib.ttf', 10)
-    font_lcd = ImageFont.truetype('C:/Windows/Fonts/segoeuib.ttf', 11)
+    font_lcd = ImageFont.truetype('C:/Windows/Fonts/consola.ttf', 10)
 
-    # Natural & Neutral Color Palette
+    # Natural & Neutral Palette matching main.cpp exact theme
     PALETTE = {
         'bg': (19, 21, 25),              # Deep matte charcoal
-        'card': (27, 30, 36),            # Subtle card slate
+        'card': (26, 29, 36),            # Subtle card slate
         'card_border': (44, 49, 58),     # Refined border
-        'device_body': (34, 38, 46),     # Deskdock chassis
+        'device_body': (33, 37, 45),     # Deskdock chassis
         'device_border': (52, 58, 70),   # Bezel accent
-        'screen_bg': (14, 16, 20),       # ST7735 black/slate
-        'panel_bg': (22, 25, 31),        # Screen side panel
-        'text_primary': (230, 235, 242), # Warm linen white
-        'text_muted': (135, 145, 160),   # Muted cool grey
+        'screen_bg': (16, 20, 28),       # COLOR_BG 0x0842
+        'panel_bg': (28, 33, 42),        # COLOR_DARK_GRAY 0x18C3
+        'text_primary': (230, 237, 243), # COLOR_WHITE 0xFFFF
+        'text_muted': (135, 145, 160),   # Muted grey
         'text_dim': (90, 98, 112),       # Dim grey
+        'cyan': (93, 187, 191),          # COLOR_CYAN 0x07FF
+        'magenta': (198, 120, 160),      # COLOR_MAGENTA 0xF81F
+        'yellow': (229, 192, 123),       # COLOR_YELLOW 0xFFE0
         'sage_green': (138, 180, 148),   # Natural sage green
-        'sage_light': (168, 206, 178),   # Soft mint highlight
-        'warm_amber': (218, 165, 105),   # Warm amber / gold
-        'slate_blue': (115, 160, 205),   # Muted slate blue
-        'terracotta': (205, 115, 115),   # Soft muted red
         'btn_bg': (42, 47, 56),          # Button background
-        'btn_border': (60, 68, 80),      # Button border
+        'btn_border': (58, 65, 78),      # Button border
     }
 
-    frames = []
+    # Pre-render vinyl cover art
+    cover_128 = Image.new('RGB', (128, 128), PALETTE['screen_bg'])
+    cdraw = ImageDraw.Draw(cover_128)
+    for y in range(128):
+        for x in range(128):
+            dx = x - 64
+            dy = y - 64
+            dist = math.sqrt(dx * dx + dy * dy)
+            if dist <= 14:
+                cover_128.putpixel((x, y), PALETTE['yellow'])
+            elif 18 <= dist <= 56:
+                if int(dist) % 4 == 0:
+                    cover_128.putpixel((x, y), (38, 44, 56))
+                else:
+                    cover_128.putpixel((x, y), (14, 16, 22))
+    cdraw.ellipse([61, 61, 67, 67], fill=(10, 12, 16))
 
-    # Precalculate song text for marquee
-    song_title = "Daft Punk - Get Lucky (feat. Pharrell Williams)   •   Album: Random Access Memories   •   "
+    song_string = "Daft Punk - Get Lucky (feat. Pharrell Williams)   "
+    frames = []
 
     for frame_idx in range(NUM_FRAMES):
         t = frame_idx / NUM_FRAMES
         angle_rad = t * 2 * math.pi
         
-        # Base canvas
         img = Image.new('RGB', (W, H), PALETTE['bg'])
         draw = ImageDraw.Draw(img)
 
-        # -------------------------------------------------------------
-        # 1. Main Background Card with subtle rounded corners & border
-        # -------------------------------------------------------------
+        # 1. Main Background Card
         draw.rounded_rectangle([15, 15, W - 15, H - 15], radius=12, fill=PALETTE['card'], outline=PALETTE['card_border'], width=1)
 
         # Header Bar
@@ -67,249 +78,154 @@ def create_animation():
         # Connection Status Badge
         badge_x, badge_y, badge_w, badge_h = W - 220, 30, 185, 24
         draw.rounded_rectangle([badge_x, badge_y, badge_x + badge_w, badge_y + badge_h], radius=6, fill=(22, 38, 30), outline=(50, 90, 65), width=1)
-        # Pulsing green dot
-        pulse_r = 4 + math.sin(angle_rad * 2) * 1.0
-        draw.ellipse([badge_x + 12 - pulse_r, badge_y + 12 - pulse_r, badge_x + 12 + pulse_r, badge_y + 12 + pulse_r], fill=PALETTE['sage_light'])
-        draw.text((badge_x + 24, badge_y + 4), "LIVE  192.168.1.51", font=font_badge, fill=PALETTE['sage_light'])
+        pulse_r = 4 + math.sin(angle_rad * 2) * 0.8
+        draw.ellipse([badge_x + 12 - pulse_r, badge_y + 12 - pulse_r, badge_x + 12 + pulse_r, badge_y + 12 + pulse_r], fill=PALETTE['sage_green'])
+        draw.text((badge_x + 24, badge_y + 4), "LIVE  192.168.1.51", font=font_badge, fill=PALETTE['sage_green'])
 
-        # Divider line
         draw.line([35, 68, W - 35, 68], fill=PALETTE['card_border'], width=1)
 
-        # -------------------------------------------------------------
         # 2. Left Side: Physical DeskDock Device Enclosure
-        # -------------------------------------------------------------
         dev_x, dev_y, dev_w, dev_h = 35, 86, 390, 360
-        # Device outer chassis with rounded corners
         draw.rounded_rectangle([dev_x, dev_y, dev_x + dev_w, dev_y + dev_h], radius=14, fill=PALETTE['device_body'], outline=PALETTE['device_border'], width=2)
         
-        # Subtle screws in 4 corners of chassis
+        # Screws in corners
         for sx, sy in [(dev_x + 12, dev_y + 12), (dev_x + dev_w - 12, dev_y + 12), (dev_x + 12, dev_y + dev_h - 12), (dev_x + dev_w - 12, dev_y + dev_h - 12)]:
             draw.ellipse([sx - 3, sy - 3, sx + 3, sy + 3], fill=(24, 26, 32), outline=(55, 60, 72), width=1)
-            draw.line([sx - 2, sy, sx + 2, sy], fill=(70, 76, 90), width=1)
 
-        # Top Device Branding / Header
-        draw.text((dev_x + 24, dev_y + 14), "ESP32 DEVKIT V1  •  ST7735 160×128", font=font_mono_small, fill=PALETTE['text_dim'])
+        draw.text((dev_x + 24, dev_y + 14), "ESP32 DEVKIT V1  •  ST7735 160×128 (DOUBLE-BUFFERED)", font=font_mono_small, fill=PALETTE['text_dim'])
 
-        # -------------------------------------------------------------
-        # 3. ST7735 Screen Emulation (Scaled to 342 x 240)
-        # -------------------------------------------------------------
-        scr_x, scr_y, scr_w, scr_h = dev_x + 24, dev_y + 34, 342, 240
-        draw.rounded_rectangle([scr_x - 3, scr_y - 3, scr_x + scr_w + 3, scr_y + scr_h + 3], radius=6, fill=(10, 11, 14), outline=(40, 44, 54), width=2)
-        draw.rectangle([scr_x, scr_y, scr_x + scr_w, scr_y + scr_h], fill=PALETTE['screen_bg'])
+        # 3. REAL ESP32 DISPLAY UI EMULATION (Rendered at 160x128 native, then 2x scaled)
+        scr_native = Image.new('RGB', (160, 128), PALETTE['screen_bg'])
+        sdraw = ImageDraw.Draw(scr_native)
 
-        # Beat detection timing (beats every ~0.75s => 4 beats in 60 frames)
+        # Beat calculation (relaxed tempo: 4 beats per 60 frames = 1 beat/sec)
         beat_phase = (frame_idx % 15) / 15.0
-        is_beat = beat_phase < 0.25
-        beat_intensity = max(0.0, 1.0 - (beat_phase / 0.35)) if is_beat else 0.0
+        is_beat = beat_phase < 0.20
+        beat_intensity = max(0.0, 1.0 - (beat_phase / 0.30)) if is_beat else 0.0
 
-        # Screen Division: Left 256px = Album Cover, Right 86px = Visualizer Side Panel
-        cover_w = 256
-        cover_rect = [scr_x, scr_y, scr_x + cover_w, scr_y + scr_h]
-
-        # Draw spinning vinyl record art
-        vinyl_cx = scr_x + cover_w // 2
-        vinyl_cy = scr_y + (scr_h - 32) // 2
-        spin_angle = angle_rad * 3
-
-        # Vinyl outer grooved disc rings
-        for r_disc in [90, 80, 70, 60, 50, 40]:
-            c_val = int(22 + (r_disc % 20) * 0.8)
-            draw.ellipse([vinyl_cx - r_disc, vinyl_cy - r_disc, vinyl_cx + r_disc, vinyl_cy + r_disc], fill=(c_val, c_val + 2, c_val + 5), outline=(32, 36, 45), width=1)
-
-        # Vinyl center label (warm amber)
-        label_r = 30
-        draw.ellipse([vinyl_cx - label_r, vinyl_cy - label_r, vinyl_cx + label_r, vinyl_cy + label_r], fill=(160, 110, 60), outline=PALETTE['warm_amber'], width=1)
-        # Center spindle hole
-        draw.ellipse([vinyl_cx - 6, vinyl_cy - 6, vinyl_cx + 6, vinyl_cy + 6], fill=(14, 16, 20))
-
-        # Grooved reflection highlight
-        for h_off in [-0.4, 0.4]:
-            h_ang = spin_angle + h_off
-            hx1 = vinyl_cx + math.cos(h_ang) * 35
-            hy1 = vinyl_cy + math.sin(h_ang) * 35
-            hx2 = vinyl_cx + math.cos(h_ang) * 85
-            hy2 = vinyl_cy + math.sin(h_ang) * 85
-            draw.line([hx1, hy1, hx2, hy2], fill=(60, 70, 85), width=2)
-
-        # Pulsing Beat Frame on album cover (Warm Amber & Sage)
-        if beat_intensity > 0.05:
-            b_color = (
-                int(PALETTE['warm_amber'][0] * beat_intensity + PALETTE['screen_bg'][0] * (1 - beat_intensity)),
-                int(PALETTE['warm_amber'][1] * beat_intensity + PALETTE['screen_bg'][1] * (1 - beat_intensity)),
-                int(PALETTE['warm_amber'][2] * beat_intensity + PALETTE['screen_bg'][2] * (1 - beat_intensity)),
-            )
-            draw.rectangle([scr_x + 1, scr_y + 1, scr_x + cover_w - 1, scr_y + scr_h - 33], outline=b_color, width=2)
-
-        # Right Side Panel (Volume meter + Play state)
-        panel_x = scr_x + cover_w
-        panel_w = scr_w - cover_w
-        draw.rectangle([panel_x, scr_y, scr_x + scr_w, scr_y + scr_h], fill=PALETTE['panel_bg'])
-        draw.line([panel_x, scr_y, panel_x, scr_y + scr_h], fill=PALETTE['device_border'], width=1)
-
-        # Play triangle icon
-        play_icon_x = panel_x + panel_w // 2
-        draw.polygon([(play_icon_x - 5, scr_y + 16), (play_icon_x - 5, scr_y + 30), (play_icon_x + 8, scr_y + 23)], fill=PALETTE['sage_green'])
-
-        # Vertical Audio Volume Equalizer Bar
-        bar_box_x = panel_x + 22
-        bar_box_y = scr_y + 44
-        bar_box_w = 42
-        bar_box_h = 150
-
-        draw.rectangle([bar_box_x, bar_box_y, bar_box_x + bar_box_w, bar_box_y + bar_box_h], fill=(16, 18, 23), outline=(45, 50, 62), width=1)
-
-        # Dynamic volume calculation with beat boost
-        base_vol = 0.55 + 0.20 * math.sin(angle_rad * 4) + 0.15 * math.cos(angle_rad * 6)
+        # Dynamic volume (smooth natural wave)
+        vol_base = 54 + 16 * math.sin(angle_rad * 2) + 6 * math.cos(angle_rad * 4)
         if is_beat:
-            base_vol = min(0.95, base_vol + 0.25 * beat_intensity)
-        current_vol_h = int(bar_box_h * base_vol)
+            vol_base += 20 * beat_intensity
+        volume = int(np.clip(vol_base, 0, 100))
 
-        # Render discrete equalizer segments
-        num_segments = 15
-        for seg in range(num_segments):
-            seg_y = bar_box_y + bar_box_h - (seg + 1) * (bar_box_h // num_segments)
-            seg_h = (bar_box_h // num_segments) - 2
-            
-            if (bar_box_h - (seg_y - bar_box_y)) <= current_vol_h:
-                if seg > 11:
-                    seg_fill = PALETTE['terracotta']
-                elif seg > 7:
-                    seg_fill = PALETTE['warm_amber']
-                else:
-                    seg_fill = PALETTE['sage_green']
-                draw.rectangle([bar_box_x + 3, seg_y, bar_box_x + bar_box_w - 3, seg_y + seg_h], fill=seg_fill)
+        # --- Exact main.cpp renderFrame logic ---
+        # 1. Left 128x128 Album Art
+        scr_native.paste(cover_128, (0, 0))
+        if is_beat:
+            sdraw.rectangle([0, 0, 127, 127], outline=PALETTE['magenta'], width=1)
+            sdraw.rectangle([1, 1, 126, 126], outline=PALETTE['yellow'], width=1)
 
-        # Bottom Scrolling Song Marquee Banner
-        banner_y = scr_y + scr_h - 32
-        draw.rectangle([scr_x, banner_y, scr_x + scr_w, scr_y + scr_h], fill=(18, 21, 26))
-        draw.line([scr_x, banner_y, scr_x + scr_w, banner_y], fill=PALETTE['slate_blue'], width=1)
+        # 2. Right 32px Side Panel (X = 128 to 159)
+        sdraw.rectangle([128, 0, 159, 127], fill=PALETTE['panel_bg'])
+        sdraw.line([128, 0, 128, 127], fill=PALETTE['magenta'], width=1)
 
-        char_offset = int((frame_idx / NUM_FRAMES) * 36) % len(song_title)
-        disp_marquee = (song_title + song_title)[char_offset : char_offset + 38]
-        draw.text((scr_x + 10, banner_y + 8), disp_marquee, font=font_lcd, fill=PALETTE['text_primary'])
+        # Play Symbol
+        sdraw.polygon([(138, 8), (138, 18), (146, 13)], fill=PALETTE['cyan'])
 
-        # -------------------------------------------------------------
+        # Volume Bar (138 to 149, height maps 0-100 to 0-80)
+        bar_h = int((volume / 100.0) * 80)
+        bar_color = PALETTE['yellow'] if is_beat else PALETTE['cyan']
+        if bar_h > 0:
+            sdraw.rectangle([138, 110 - bar_h, 149, 110], fill=bar_color)
+        sdraw.rectangle([138, 30, 149, 110], outline=PALETTE['text_primary'], width=1)
+
+        # 3. Bottom Marquee Overlay (0 to 127, Y = 110 to 127)
+        sdraw.rectangle([0, 110, 127, 127], fill=PALETTE['panel_bg'])
+        sdraw.line([0, 110, 127, 110], fill=PALETTE['cyan'], width=1)
+
+        char_pos = int((frame_idx / NUM_FRAMES) * len(song_string)) % len(song_string)
+        disp_text = (song_string + song_string)[char_pos : char_pos + 18]
+        sdraw.text((4, 114), disp_text, font=font_lcd, fill=PALETTE['text_primary'])
+
+        # Upscale 2.1x to fit device window (336 x 268)
+        scr_scaled = scr_native.resize((340, 240), Image.NEAREST)
+
+        # Paste on chassis
+        scr_x, scr_y = dev_x + 24, dev_y + 34
+        draw.rounded_rectangle([scr_x - 3, scr_y - 3, scr_x + 340 + 3, scr_y + 240 + 3], radius=6, fill=(10, 11, 14), outline=(40, 44, 54), width=2)
+        img.paste(scr_scaled, (scr_x, scr_y))
+
         # 4. Status LEDs on Chassis
-        # -------------------------------------------------------------
         led_y = dev_y + 290
-        # Blue LED (Wi-Fi streaming) - gentle breathing
-        blue_glow = 0.7 + 0.3 * math.sin(angle_rad * 2)
-        blue_color = (int(PALETTE['slate_blue'][0] * blue_glow), int(PALETTE['slate_blue'][1] * blue_glow), int(PALETTE['slate_blue'][2] * blue_glow))
-        draw.ellipse([dev_x + 40 - 5, led_y - 5, dev_x + 40 + 5, led_y + 5], fill=blue_color, outline=(80, 110, 150))
-        draw.text((dev_x + 52, led_y - 6), "SYNC", font=font_mono_small, fill=PALETTE['text_muted'])
+        # Blue Sync LED
+        blue_color = (int(PALETTE['cyan'][0] * 0.8), int(PALETTE['cyan'][1] * 0.8), int(PALETTE['cyan'][2] * 0.8))
+        draw.ellipse([dev_x + 40 - 5, led_y - 5, dev_x + 40 + 5, led_y + 5], fill=blue_color, outline=(60, 90, 110))
+        draw.text((dev_x + 52, led_y - 6), "SYNC (D12)", font=font_mono_small, fill=PALETTE['text_muted'])
 
-        # Green LED (Beat Pulse) - snaps on beat
-        green_val = int(255 * (0.15 + 0.85 * beat_intensity))
+        # Green Beat LED
+        green_val = int(255 * (0.2 + 0.8 * beat_intensity))
         green_color = (int(PALETTE['sage_green'][0] * (green_val / 255)), int(PALETTE['sage_green'][1] * (green_val / 255)), int(PALETTE['sage_green'][2] * (green_val / 255)))
-        draw.ellipse([dev_x + 160 - 5, led_y - 5, dev_x + 160 + 5, led_y + 5], fill=green_color, outline=(70, 120, 80))
-        draw.text((dev_x + 172, led_y - 6), "BEAT", font=font_mono_small, fill=PALETTE['text_muted'])
+        draw.ellipse([dev_x + 160 - 5, led_y - 5, dev_x + 160 + 5, led_y + 5], fill=green_color, outline=(60, 100, 70))
+        draw.text((dev_x + 172, led_y - 6), "BEAT (D14)", font=font_mono_small, fill=PALETTE['text_muted'])
 
-        # Red LED (Idle / Paused) - dim indicator
-        draw.ellipse([dev_x + 280 - 5, led_y - 5, dev_x + 280 + 5, led_y + 5], fill=(70, 30, 30), outline=(100, 45, 45))
-        draw.text((dev_x + 292, led_y - 6), "IDLE", font=font_mono_small, fill=PALETTE['text_dim'])
+        # Red Idle LED
+        draw.ellipse([dev_x + 280 - 5, led_y - 5, dev_x + 280 + 5, led_y + 5], fill=(60, 25, 25), outline=(90, 40, 40))
+        draw.text((dev_x + 292, led_y - 6), "IDLE (D27)", font=font_mono_small, fill=PALETTE['text_dim'])
 
-        # -------------------------------------------------------------
         # 5. Hardware Navigation Buttons
-        # -------------------------------------------------------------
         btn_y = dev_y + 314
         btn_w, btn_h = 96, 32
-        btns = [
-            ("PREV (D25)", dev_x + 28),
-            ("PLAY (D26)", dev_x + 148),
-            ("NEXT (D33)", dev_x + 268)
-        ]
-        
-        # Simulate button press every ~40 frames
-        pressed_btn_idx = 1 if (35 <= frame_idx <= 42) else -1
+        btns = [("PREV (D25)", dev_x + 28), ("PLAY (D26)", dev_x + 148), ("NEXT (D33)", dev_x + 268)]
+        for label, bx in btns:
+            draw.rounded_rectangle([bx, btn_y, bx + btn_w, btn_y + btn_h], radius=6, fill=PALETTE['btn_bg'], outline=PALETTE['btn_border'], width=1)
+            draw.text((bx + 16, btn_y + 9), label, font=font_btn, fill=PALETTE['text_primary'])
 
-        for i, (label, bx) in enumerate(btns):
-            is_pressed = (i == pressed_btn_idx)
-            b_bg = (55, 62, 75) if is_pressed else PALETTE['btn_bg']
-            b_border = PALETTE['warm_amber'] if is_pressed else PALETTE['btn_border']
-            b_text_col = PALETTE['warm_amber'] if is_pressed else PALETTE['text_primary']
-            
-            draw.rounded_rectangle([bx, btn_y, bx + btn_w, btn_y + btn_h], radius=6, fill=b_bg, outline=b_border, width=1)
-            draw.text((bx + 16, btn_y + 9), label, font=font_btn, fill=b_text_col)
-
-        # -------------------------------------------------------------
         # 6. Right Side Panel: System Metrics & FFT Audio Telemetry
-        # -------------------------------------------------------------
-        side_x = 445
-        side_y = 86
-        side_w = 360
-        side_h = 360
-
+        side_x, side_y, side_w, side_h = 445, 86, 360, 360
         draw.rounded_rectangle([side_x, side_y, side_x + side_w, side_y + side_h], radius=12, fill=(22, 24, 29), outline=PALETTE['card_border'], width=1)
 
-        # Telemetry Section Title
-        draw.text((side_x + 20, side_y + 16), "LIVE AUDIO & TELEMETRY STREAM", font=font_badge, fill=PALETTE['slate_blue'])
+        draw.text((side_x + 20, side_y + 16), "LIVE AUDIO & TELEMETRY STREAM", font=font_badge, fill=PALETTE['cyan'])
 
-        # Audio FFT Spectrum Visualizer Card
-        fft_box_x = side_x + 20
-        fft_box_y = side_y + 40
-        fft_box_w = side_w - 40
-        fft_box_h = 100
+        # FFT Audio Spectrum Box
+        fft_x, fft_y, fft_w, fft_h = side_x + 20, side_y + 40, side_w - 40, 100
+        draw.rounded_rectangle([fft_x, fft_y, fft_x + fft_w, fft_y + fft_h], radius=8, fill=(15, 17, 21), outline=(38, 42, 52), width=1)
+        draw.text((fft_x + 12, fft_y + 8), "WASAPI Loopback FFT Spectrum (20 Hz - 16 kHz)", font=font_mono_small, fill=PALETTE['text_dim'])
 
-        draw.rounded_rectangle([fft_box_x, fft_box_y, fft_box_x + fft_box_w, fft_box_y + fft_box_h], radius=8, fill=(15, 17, 21), outline=(38, 42, 52), width=1)
-        draw.text((fft_box_x + 12, fft_box_y + 8), "WASAPI Loopback FFT Spectrum (20 Hz - 16 kHz)", font=font_mono_small, fill=PALETTE['text_dim'])
+        # Draw relaxed FFT spectrum bars
+        num_fft = 24
+        bw = (fft_w - 24) // num_fft
+        for bi in range(num_fft):
+            ffactor = math.exp(-bi * 0.09)
+            fdyn = math.sin(angle_rad * 2 + bi * 0.4) * 0.25 + math.cos(angle_rad * 3 + bi * 0.6) * 0.15
+            if bi < 5 and is_beat:
+                fdyn += 0.45 * beat_intensity
+            bar_height = max(6, int(58 * (ffactor * 0.7 + fdyn * 0.3)))
+            bx = fft_x + 12 + bi * bw
+            by = fft_y + fft_h - 12 - bar_height
+            bcolor = PALETTE['yellow'] if (bi < 5 and is_beat) else PALETTE['sage_green']
+            draw.rectangle([bx, by, bx + bw - 2, fft_y + fft_h - 12], fill=bcolor)
 
-        # Draw simulated dynamic FFT spectrum bars
-        num_fft_bars = 28
-        bar_w = (fft_box_w - 24) // num_fft_bars
-        for b_idx in range(num_fft_bars):
-            freq_factor = math.exp(-b_idx * 0.08)
-            dyn = math.sin(angle_rad * 3 + b_idx * 0.4) * 0.3 + math.cos(angle_rad * 5 + b_idx * 0.7) * 0.2
-            if b_idx < 5 and is_beat:
-                dyn += 0.5 * beat_intensity
-            
-            bar_height = max(6, int(60 * (freq_factor * 0.7 + dyn * 0.3)))
-            bx = fft_box_x + 12 + b_idx * bar_w
-            by = fft_box_y + fft_box_h - 12 - bar_height
-
-            bar_c = PALETTE['warm_amber'] if (b_idx < 6 and is_beat) else PALETTE['sage_green']
-            draw.rectangle([bx, by, bx + bar_w - 2, fft_box_y + fft_box_h - 12], fill=bar_c)
-
-        # Key Metrics Grid (2x2)
+        # Key Metrics Grid
         grid_y = side_y + 154
         metrics = [
-            ("RMS VOLUME", f"{int(base_vol * 100)} %", "-13.8 dBFS", PALETTE['sage_green']),
-            ("BASS KICK", "TRIGGERED" if is_beat else "LISTENING", "20-140 Hz Band", PALETTE['warm_amber'] if is_beat else PALETTE['text_muted']),
-            ("UDP TELEMETRY", "40.2 FPS", "Port 12345 (Sub-10ms)", PALETTE['slate_blue']),
+            ("RMS VOLUME", f"{volume} %", "-14.2 dBFS", PALETTE['sage_green']),
+            ("BASS KICK", "TRIGGERED" if is_beat else "LISTENING", "20-140 Hz Band", PALETTE['yellow'] if is_beat else PALETTE['text_muted']),
+            ("UDP TELEMETRY", "40.0 FPS", "Port 12345 (Sub-10ms)", PALETTE['cyan']),
             ("HTTP RAW COVER", "32.7 KB (RGB565)", "Port 8080 (Lossless TCP)", PALETTE['text_primary']),
         ]
 
         for idx, (m_title, m_val, m_sub, m_col) in enumerate(metrics):
-            gx = side_x + 20 + (idx % 2) * (fft_box_w // 2 + 5)
+            gx = side_x + 20 + (idx % 2) * (fft_w // 2 + 5)
             gy = grid_y + (idx // 2) * 58
-            gw = fft_box_w // 2 - 5
-            gh = 50
-
-            draw.rounded_rectangle([gx, gy, gx + gw, gy + gh], radius=6, fill=(17, 19, 23), outline=(35, 39, 48), width=1)
+            gw = fft_w // 2 - 5
+            draw.rounded_rectangle([gx, gy, gx + gw, gy + 50], radius=6, fill=(17, 19, 23), outline=(35, 39, 48), width=1)
             draw.text((gx + 10, gy + 6), m_title, font=font_mono_small, fill=PALETTE['text_dim'])
             draw.text((gx + 10, gy + 18), m_val, font=font_mono_bold, fill=m_col)
             draw.text((gx + 10, gy + 34), m_sub, font=font_mono_small, fill=PALETTE['text_muted'])
 
-        # Protocol Architecture Flow at Bottom of Panel
+        # Protocol Flow
         flow_y = side_y + 280
         draw.rounded_rectangle([side_x + 20, flow_y, side_x + side_w - 20, flow_y + 64], radius=6, fill=(15, 17, 21), outline=(35, 39, 48), width=1)
         draw.text((side_x + 30, flow_y + 8), "BIDIRECTIONAL WI-FI BRIDGE", font=font_mono_small, fill=PALETTE['text_dim'])
         draw.text((side_x + 30, flow_y + 24), "PC Host ────► UDP Telemetry & HTTP ────► ESP32", font=font_mono_small, fill=PALETTE['sage_green'])
-        draw.text((side_x + 30, flow_y + 42), "ESP32   ────► Hardware Button Packet ──► PC Host", font=font_mono_small, fill=PALETTE['warm_amber'])
+        draw.text((side_x + 30, flow_y + 42), "ESP32   ────► Hardware Button Packet ──► PC Host", font=font_mono_small, fill=PALETTE['yellow'])
 
-        # Append frame
         frames.append(img)
 
-    # Save as optimized animated GIF
     out_path = 'assets/deskdock_demo.gif'
-    frames[0].save(
-        out_path,
-        save_all=True,
-        append_images=frames[1:],
-        duration=DURATION,
-        loop=0,
-        optimize=True
-    )
-    print(f"Successfully generated GIF animation at: {out_path} ({len(frames)} frames)")
+    frames[0].save(out_path, save_all=True, append_images=frames[1:], duration=DURATION, loop=0, optimize=True)
+    print(f"Successfully generated relaxed deskdock demo at: {out_path} ({len(frames)} frames, {DURATION}ms delay)")
 
 if __name__ == '__main__':
     create_animation()

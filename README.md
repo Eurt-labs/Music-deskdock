@@ -44,7 +44,7 @@ The Python script captures desktop audio in real time, extracts volume levels an
 ## 📺 ESP32 Display Layout & UI Architecture
 
 <p align="center">
-  <img src="assets/esp32_display_real.gif" alt="ST7735 Display UI Portrait Demo" width="100%" />
+  <img src="assets/esp32_display_real.gif" alt="ST7735 Display UI Portrait Demo" width="280" />
 </p>
 
 The 1.8" ST7735 display runs in **Portrait Mode (128×160 pixels)** with a custom double-buffered RAM canvas (`GFXcanvas16`):

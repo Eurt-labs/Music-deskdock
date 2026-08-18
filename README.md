@@ -1,7 +1,7 @@
 # ESP32 Music Deskdock - Live Album Cover & Audio Visualizer
 
 <p align="center">
-  <img src="assets/deskdock_demo.gif" alt="ESP32 Music Deskdock Live Preview" width="100%" />
+  <img src="assets/deskdock_hero.gif" alt="ESP32 Music Deskdock Live Preview" width="100%" />
 </p>
 
 A real-time desktop music companion built with an **ESP32 DevKit V1** and a 1.8" ST7735 TFT display (160x128). The ESP32 pairs over Wi-Fi with a Python background app running on your Windows PC. 
@@ -9,7 +9,6 @@ A real-time desktop music companion built with an **ESP32 DevKit V1** and a 1.8"
 The Python script captures desktop audio in real time, extracts volume levels and bass beats, pulls the currently playing track's title and album art (from Spotify, YouTube, Apple Music, VLC, browser tabs, etc.), and streams the telemetry to the ESP32. The ESP32 also features 3 hardware push buttons that allow you to control playback (Play/Pause, Next, Previous) directly from your desk.
 
 ---
-
 
 ## 🛠️ System Architecture
 
@@ -42,14 +41,13 @@ The Python script captures desktop audio in real time, extracts volume levels an
 ## 📺 ESP32 Display Layout & UI Architecture
 
 <p align="center">
-  <img src="assets/esp32_display_demo.gif" alt="ST7735 Display UI Animation Demo" width="100%" />
+  <img src="assets/esp32_display_real.gif" alt="ST7735 Display UI Animation Demo" width="100%" />
 </p>
 
-
 The 1.8" ST7735 display runs in landscape mode (160×128 pixels) with a custom double-buffered RAM canvas (`GFXcanvas16`):
-- **Left 128×128 Viewport**: Displays live 16-bit RGB565 album cover artwork with a dynamic pulsing neon border on bass kick beats.
-- **Right 32px Side Panel**: Features a real-time playback status icon and a 14-segment vertical volume visualizer equalizer bar.
-- **Bottom 18px Marquee**: Smoothly scrolls long track names and artist metadata across the screen with zero visual tearing.
+- **Left 128×128 Viewport**: Displays live 16-bit RGB565 album cover artwork with a dynamic pulsing neon double border (Neon Magenta outer & Gold Yellow inner) on bass kick beats.
+- **Right 32px Side Panel**: Cyan playback indicator (`►`) and a solid vertical volume equalizer bar rising inside a white frame (Cyan normally, Yellow on beat).
+- **Bottom 18px Marquee**: Smoothly scrolls long track names and artist metadata across the screen over a dark grey banner with a cyan top line.
 
 ---
 

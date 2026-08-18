@@ -1,11 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 560" width="100%" height="100%">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 880 560" width="100%" height="100%">
   <defs>
-    <!-- Modern Typography -->
     <style>
-      @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&amp;family=Plus+Jakarta+Sans:wght@500;700;800&amp;display=swap');
-      
-      .font-sans { font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif; }
-      .font-mono { font-family: 'JetBrains Mono', monospace; }
+      /* <![CDATA[ */
+      .font-sans { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; }
+      .font-mono { font-family: ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace; }
 
       /* Visualizer & Device Animations */
       @keyframes spinRecord {
@@ -14,10 +12,10 @@
       }
 
       @keyframes beatGlow {
-        0%, 100% { stroke: #2a1b38; stroke-width: 1.5; }
-        15% { stroke: #f81f8f; stroke-width: 3; filter: drop-shadow(0 0 6px #f81f8f); }
-        35% { stroke: #ffe043; stroke-width: 2; filter: drop-shadow(0 0 4px #ffe043); }
-        60% { stroke: #2a1b38; stroke-width: 1.5; }
+        0%, 100% { stroke: #2a1b38; stroke-width: 1.5; opacity: 0.6; }
+        15% { stroke: #f81f8f; stroke-width: 3.5; opacity: 1.0; }
+        35% { stroke: #ffe043; stroke-width: 2.5; opacity: 1.0; }
+        60% { stroke: #2a1b38; stroke-width: 1.5; opacity: 0.6; }
       }
 
       @keyframes marqueeSlide {
@@ -33,14 +31,14 @@
       }
 
       @keyframes ledBeatPulse {
-        0%, 100% { fill: #1d402b; filter: drop-shadow(0 0 0px transparent); }
-        15% { fill: #00ff73; filter: drop-shadow(0 0 8px #00ff73); }
-        45% { fill: #1d402b; }
+        0%, 100% { fill: #1d402b; opacity: 0.5; }
+        15% { fill: #00ff73; opacity: 1.0; }
+        45% { fill: #1d402b; opacity: 0.5; }
       }
 
       @keyframes ledSyncPulse {
-        0%, 100% { fill: #07ffea; filter: drop-shadow(0 0 4px #07ffea); }
-        50% { fill: #059c8f; }
+        0%, 100% { fill: #07ffea; opacity: 0.9; }
+        50% { fill: #059c8f; opacity: 0.6; }
       }
 
       @keyframes fft1 { 0%, 100% { height: 18px; y: 34px; } 50% { height: 46px; y: 6px; } }
@@ -56,6 +54,7 @@
       .vol-bar { animation: volBarAnim 1.25s ease-in-out infinite; }
       .led-beat { animation: ledBeatPulse 1.25s ease-in-out infinite; }
       .led-sync { animation: ledSyncPulse 3s ease-in-out infinite; }
+      /* ]]> */
     </style>
 
     <linearGradient id="mainBg" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -150,7 +149,7 @@
         <polygon points="12,30 12,42 22,36" fill="#07ffea" />
 
         <!-- Horizontal Volume Equalizer Bar -->
-        <rect x="30" y="31" width="160" height="12" rx="2" fill="#0a0c10" stroke="#ffffff" stroke-width="1" />
+        <rect x="30" y="31" width="160" height="12" rx="2" fill="#0a0d12" stroke="#ffffff" stroke-width="1" />
         <rect x="32" y="33" width="110" height="8" rx="1" class="vol-bar" />
       </g>
     </g>

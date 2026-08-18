@@ -1,0 +1,16 @@
+# PlatformIO build artifacts
+.pio/
+compile_commands.json
+
+# Python cache & virtual environments
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+
+# IDE and cache directories
+.cache/
+.vscode/
+

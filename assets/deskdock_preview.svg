@@ -1,8 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 880 560" width="100%" height="100%">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 920 580" width="100%" height="100%">
   <defs>
     <style>
       /* <![CDATA[ */
-      .font-sans { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; }
+      .font-sans { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
       .font-mono { font-family: ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace; }
 
       /* Visualizer & Device Animations */
@@ -20,25 +20,25 @@
 
       @keyframes marqueeSlide {
         0%   { transform: translateX(0px); }
-        100% { transform: translateX(-240px); }
+        100% { transform: translateX(-260px); }
       }
 
       @keyframes volBarAnim {
-        0%, 100% { width: 95px; fill: #07ffea; }
-        15% { width: 130px; fill: #ffe043; }
-        45% { width: 80px; fill: #07ffea; }
-        70% { width: 115px; fill: #07ffea; }
+        0%, 100% { width: 95px; fill: #00f0ff; }
+        15% { width: 130px; fill: #ffd700; }
+        45% { width: 80px; fill: #00f0ff; }
+        70% { width: 115px; fill: #00f0ff; }
       }
 
       @keyframes ledBeatPulse {
-        0%, 100% { fill: #1d402b; opacity: 0.5; }
-        15% { fill: #00ff73; opacity: 1.0; }
-        45% { fill: #1d402b; opacity: 0.5; }
+        0%, 100% { fill: #103322; opacity: 0.5; }
+        15% { fill: #00ff88; opacity: 1.0; }
+        45% { fill: #103322; opacity: 0.5; }
       }
 
       @keyframes ledSyncPulse {
-        0%, 100% { fill: #07ffea; opacity: 0.9; }
-        50% { fill: #059c8f; opacity: 0.6; }
+        0%, 100% { fill: #00f0ff; opacity: 1.0; }
+        50% { fill: #0099aa; opacity: 0.7; }
       }
 
       @keyframes fft1 { 0%, 100% { height: 18px; y: 34px; } 50% { height: 46px; y: 6px; } }
@@ -58,73 +58,73 @@
     </style>
 
     <linearGradient id="mainBg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#12141a" />
-      <stop offset="100%" stop-color="#0a0c10" />
+      <stop offset="0%" stop-color="#0f1117" />
+      <stop offset="100%" stop-color="#08090d" />
     </linearGradient>
 
     <linearGradient id="chassisGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#1e222b" />
-      <stop offset="100%" stop-color="#14171f" />
+      <stop offset="0%" stop-color="#1c202a" />
+      <stop offset="100%" stop-color="#12151c" />
     </linearGradient>
   </defs>
 
   <!-- Canvas Container -->
-  <rect width="880" height="560" rx="16" fill="url(#mainBg)" />
-  <rect x="16" y="16" width="848" height="528" rx="14" fill="#14171f" stroke="#252a36" stroke-width="1.2" />
+  <rect width="920" height="580" rx="16" fill="url(#mainBg)" />
+  <rect x="14" y="14" width="892" height="552" rx="14" fill="#12151d" stroke="#252c3b" stroke-width="1.5" />
 
   <!-- Top Hero Header -->
   <g transform="translate(36, 42)">
-    <text x="0" y="0" class="font-sans" font-size="16" font-weight="800" fill="#e6ebf2">ESP32 MUSIC DESKDOCK</text>
-    <text x="212" y="0" class="font-mono" font-size="12" fill="#07ffea">• 1.8&quot; ST7735 Portrait Display (128x160) • Hardware Controller</text>
+    <text x="0" y="0" class="font-sans" font-size="16" font-weight="800" fill="#ffffff">ESP32 MUSIC DESKDOCK</text>
+    <text x="210" y="0" class="font-mono" font-size="12" font-weight="600" fill="#00f0ff">• 1.8&quot; ST7735 Portrait Display (128x160) • Hardware Controller</text>
     
     <!-- Live Badges -->
-    <rect x="670" y="-14" width="138" height="22" rx="4" fill="#0c2326" stroke="#135257" stroke-width="1" />
-    <circle cx="682" cy="-3" r="3.5" fill="#07ffea" />
-    <text x="692" y="1" class="font-mono" font-size="10" font-weight="700" fill="#07ffea">PORTRAIT 128x160</text>
+    <rect x="690" y="-14" width="150" height="24" rx="5" fill="#0c2328" stroke="#00f0ff" stroke-width="1.2" />
+    <circle cx="704" cy="-2" r="4" fill="#00f0ff" />
+    <text x="716" y="2" class="font-mono" font-size="11" font-weight="700" fill="#00f0ff">PORTRAIT 128x160</text>
   </g>
 
-  <line x1="36" y1="58" x2="844" y2="58" stroke="#232833" stroke-width="1" />
+  <line x1="36" y1="58" x2="884" y2="58" stroke="#232a38" stroke-width="1.2" />
 
   <!-- ================= LEFT: ESP32 HARDWARE ENCLOSURE (PORTRAIT) ================= -->
   <g transform="translate(36, 76)">
     <!-- Chassis Body -->
-    <rect x="0" y="0" width="370" height="448" rx="14" fill="url(#chassisGrad)" stroke="#2f3747" stroke-width="1.5" />
+    <rect x="0" y="0" width="380" height="466" rx="14" fill="url(#chassisGrad)" stroke="#2f3747" stroke-width="1.5" />
     
     <!-- Header Title -->
-    <text x="20" y="26" class="font-sans" font-size="11" font-weight="700" fill="#717c91">ESP32 DESKDOCK HARDWARE (PORTRAIT)</text>
+    <text x="20" y="26" class="font-sans" font-size="12" font-weight="700" fill="#cbd5e1">ESP32 DESKDOCK HARDWARE (PORTRAIT)</text>
     
     <!-- ST7735 Portrait Display Frame (Scaled 128x160: 200 x 250 px) -->
-    <rect x="85" y="42" width="200" height="250" rx="6" fill="#0a0c10" stroke="#222834" stroke-width="2" />
+    <rect x="90" y="42" width="200" height="250" rx="6" fill="#080a0e" stroke="#252c3b" stroke-width="2" />
     
     <!-- Active LCD Screen -->
-    <g transform="translate(85, 42)">
+    <g transform="translate(90, 42)">
       <!-- 1. Top 200x200 Album Artwork (Scaled from 128x128) -->
       <g clip-path="url(#chassisClip)">
         <clipPath id="chassisClip">
           <rect x="0" y="0" width="200" height="200" rx="4" />
         </clipPath>
         
-        <rect x="0" y="0" width="200" height="200" fill="#0e1117" />
+        <rect x="0" y="0" width="200" height="200" fill="#0b0e14" />
 
         <!-- Vinyl Disc Graphic -->
         <g class="record-spin">
-          <circle cx="100" cy="100" r="90" fill="#1b2029" stroke="#262d3a" stroke-width="2" />
-          <circle cx="100" cy="100" r="76" fill="#13171e" stroke="#1d222b" stroke-width="1.2" />
+          <circle cx="100" cy="100" r="90" fill="#181d26" stroke="#252b37" stroke-width="2" />
+          <circle cx="100" cy="100" r="76" fill="#12161e" stroke="#1d222b" stroke-width="1.2" />
           <circle cx="100" cy="100" r="62" fill="#161921" stroke="#222732" stroke-width="1.2" />
           <circle cx="100" cy="100" r="48" fill="#14171e" stroke="#1d222b" stroke-width="1.2" />
           <circle cx="100" cy="100" r="36" fill="#171b24" stroke="#242a36" stroke-width="1.2" />
           
           <!-- Vinyl Spindle Label -->
-          <circle cx="100" cy="100" r="26" fill="#ffe043" stroke="#d49a18" stroke-width="1.5" />
-          <circle cx="100" cy="100" r="8" fill="#0a0c10" />
+          <circle cx="100" cy="100" r="26" fill="#ffd700" stroke="#d49a18" stroke-width="1.5" />
+          <circle cx="100" cy="100" r="8" fill="#080a0e" />
         </g>
 
         <!-- Dynamic Pulsing Beat Border -->
         <rect x="2" y="2" width="196" height="196" rx="2" fill="none" class="beat-box" />
 
         <!-- Resolution Tag -->
-        <rect x="6" y="6" width="70" height="14" rx="2" fill="#0a0d12" opacity="0.8" />
-        <text x="10" y="17" class="font-mono" font-size="8" font-weight="700" fill="#07ffea">128x128 ART</text>
+        <rect x="6" y="6" width="76" height="16" rx="3" fill="#000000" opacity="0.85" />
+        <text x="10" y="18" class="font-mono" font-size="9" font-weight="700" fill="#00f0ff">128x128 ART</text>
       </g>
 
       <!-- 2. Bottom 200x50 Control & Info Panel (Scaled from 128x32) -->
@@ -138,7 +138,7 @@
             <rect x="8" y="4" width="184" height="18" />
           </clipPath>
           <g class="marquee-text">
-            <text x="8" y="16" class="font-sans" font-size="10" font-weight="700" fill="#ffffff">The Weeknd - Blinding Lights • After Hours • The Weeknd - Blinding Lights</text>
+            <text x="8" y="16" class="font-sans" font-size="11" font-weight="700" fill="#ffffff">The Weeknd - Blinding Lights • After Hours • The Weeknd - Blinding Lights</text>
           </g>
         </g>
 
@@ -146,126 +146,135 @@
         <line x1="8" y1="24" x2="192" y2="24" stroke="#084242" stroke-width="1" />
 
         <!-- Play Indicator (►) -->
-        <polygon points="12,30 12,42 22,36" fill="#07ffea" />
+        <polygon points="12,30 12,42 22,36" fill="#00f0ff" />
 
         <!-- Horizontal Volume Equalizer Bar -->
-        <rect x="30" y="31" width="160" height="12" rx="2" fill="#0a0d12" stroke="#ffffff" stroke-width="1" />
+        <rect x="30" y="31" width="160" height="12" rx="2" fill="#080a0e" stroke="#ffffff" stroke-width="1" />
         <rect x="32" y="33" width="110" height="8" rx="1" class="vol-bar" />
       </g>
     </g>
 
     <!-- Status LEDs on Hardware Chassis -->
-    <g transform="translate(30, 310)">
-      <circle cx="30" cy="8" r="5" fill="#07ffea" class="led-sync" />
-      <text x="42" y="12" class="font-mono" font-size="9" fill="#07ffea" font-weight="600">WI-FI SYNC</text>
+    <g transform="translate(30, 316)">
+      <circle cx="30" cy="8" r="6" fill="#00f0ff" class="led-sync" />
+      <text x="44" y="12" class="font-mono" font-size="10" fill="#00f0ff" font-weight="700">WI-FI SYNC</text>
 
-      <circle cx="145" cy="8" r="5" fill="#00ff73" class="led-beat" />
-      <text x="157" y="12" class="font-mono" font-size="9" fill="#00ff73" font-weight="600">BEAT PULSE</text>
+      <circle cx="150" cy="8" r="6" fill="#00ff88" class="led-beat" />
+      <text x="164" y="12" class="font-mono" font-size="10" fill="#00ff88" font-weight="700">BEAT PULSE</text>
 
-      <circle cx="260" cy="8" r="5" fill="#4d1a1a" />
-      <text x="272" y="12" class="font-mono" font-size="9" fill="#6b7280">IDLE</text>
+      <circle cx="270" cy="8" r="6" fill="#4d1a1a" />
+      <text x="284" y="12" class="font-mono" font-size="10" fill="#94a3b8" font-weight="600">IDLE</text>
     </g>
 
     <!-- Tactile Push Buttons -->
-    <g transform="translate(20, 345)">
+    <g transform="translate(20, 354)">
       <!-- PREVIOUS (D25) -->
-      <rect x="0" y="0" width="102" height="36" rx="6" fill="#252a35" stroke="#373f50" stroke-width="1.2" />
-      <text x="24" y="22" class="font-sans" font-size="10" font-weight="700" fill="#e6ebf2">⏮ PREV</text>
-      <text x="24" y="32" class="font-mono" font-size="8" fill="#717c91">GPIO 25</text>
+      <rect x="0" y="0" width="106" height="38" rx="6" fill="#252a35" stroke="#3d4659" stroke-width="1.2" />
+      <text x="22" y="20" class="font-sans" font-size="11" font-weight="700" fill="#ffffff">⏮ PREV</text>
+      <text x="32" y="32" class="font-mono" font-size="9" font-weight="600" fill="#94a3b8">GPIO 25</text>
 
       <!-- PLAY / PAUSE (D26) -->
-      <rect x="114" y="0" width="102" height="36" rx="6" fill="#1b2e2b" stroke="#07ffea" stroke-width="1.5" />
-      <text x="134" y="22" class="font-sans" font-size="10" font-weight="700" fill="#07ffea">⏯ PLAY</text>
-      <text x="138" y="32" class="font-mono" font-size="8" fill="#07ffea">GPIO 26</text>
+      <rect x="117" y="0" width="106" height="38" rx="6" fill="#152828" stroke="#00f0ff" stroke-width="1.5" />
+      <text x="139" y="20" class="font-sans" font-size="11" font-weight="700" fill="#00f0ff">⏯ PLAY</text>
+      <text x="149" y="32" class="font-mono" font-size="9" font-weight="600" fill="#00f0ff">GPIO 26</text>
 
       <!-- NEXT (D33) -->
-      <rect x="228" y="0" width="102" height="36" rx="6" fill="#252a35" stroke="#373f50" stroke-width="1.2" />
-      <text x="252" y="22" class="font-sans" font-size="10" font-weight="700" fill="#e6ebf2">⏭ NEXT</text>
-      <text x="252" y="32" class="font-mono" font-size="8" fill="#717c91">GPIO 33</text>
+      <rect x="234" y="0" width="106" height="38" rx="6" fill="#252a35" stroke="#3d4659" stroke-width="1.2" />
+      <text x="256" y="20" class="font-sans" font-size="11" font-weight="700" fill="#ffffff">⏭ NEXT</text>
+      <text x="266" y="32" class="font-mono" font-size="9" font-weight="600" fill="#94a3b8">GPIO 33</text>
     </g>
 
     <!-- Bottom Wiring Pinout Quick Info -->
-    <g transform="translate(20, 400)">
-      <rect x="0" y="0" width="330" height="34" rx="6" fill="#101319" stroke="#1d222b" stroke-width="1" />
-      <text x="12" y="21" class="font-mono" font-size="9" fill="#717c91">VSPI: CS:D5 • RST:D4 • DC:D2 • MOSI:D23 • SCK:D18</text>
+    <g transform="translate(20, 412)">
+      <rect x="0" y="0" width="340" height="36" rx="6" fill="#0d1016" stroke="#252c3b" stroke-width="1" />
+      <text x="14" y="23" class="font-mono" font-size="10" font-weight="600" fill="#cbd5e1">VSPI: CS:D5 • RST:D4 • DC:D2 • MOSI:D23 • SCK:D18</text>
     </g>
   </g>
 
   <!-- ================= RIGHT: PC TRANSMITTER & TELEMETRY STREAM ================= -->
-  <g transform="translate(426, 76)">
-    <rect x="0" y="0" width="418" height="448" rx="14" fill="#161921" stroke="#2a303d" stroke-width="1.2" />
+  <g transform="translate(440, 76)">
+    <rect x="0" y="0" width="444" height="466" rx="14" fill="#141720" stroke="#28303f" stroke-width="1.5" />
     
-    <text x="20" y="26" class="font-sans" font-size="12" font-weight="700" fill="#07ffea">LIVE AUDIO &amp; TELEMETRY ENGINE</text>
+    <text x="20" y="26" class="font-sans" font-size="13" font-weight="700" fill="#00f0ff">LIVE AUDIO &amp; TELEMETRY ENGINE</text>
 
     <!-- Real-time FFT Spectrum Card -->
-    <rect x="18" y="42" width="382" height="120" rx="8" fill="#101217" stroke="#222834" stroke-width="1" />
-    <text x="30" y="62" class="font-mono" font-size="10" fill="#717c91">WASAPI Loopback FFT Spectrum (20 Hz - 16 kHz)</text>
+    <g transform="translate(18, 42)">
+      <rect x="0" y="0" width="408" height="126" rx="8" fill="#0c0e14" stroke="#252c3b" stroke-width="1.2" />
+      <text x="16" y="22" class="font-mono" font-size="11" font-weight="600" fill="#cbd5e1">WASAPI Loopback FFT Spectrum (20 Hz - 16 kHz)</text>
 
-    <!-- Animated FFT Frequency Bars -->
-    <g transform="translate(30, 72)">
-      <rect x="0"   width="9" rx="1.5" fill="#f81f8f" style="animation: fft1 0.75s ease-in-out infinite;" />
-      <rect x="14"  width="9" rx="1.5" fill="#f81f8f" style="animation: fft2 0.65s ease-in-out infinite;" />
-      <rect x="28"  width="9" rx="1.5" fill="#ffe043" style="animation: fft3 0.85s ease-in-out infinite;" />
-      <rect x="42"  width="9" rx="1.5" fill="#ffe043" style="animation: fft4 0.55s ease-in-out infinite;" />
-      <rect x="56"  width="9" rx="1.5" fill="#07ffea" style="animation: fft5 0.95s ease-in-out infinite;" />
-      <rect x="70"  width="9" rx="1.5" fill="#07ffea" style="animation: fft6 0.75s ease-in-out infinite;" />
-      <rect x="84"  width="9" rx="1.5" fill="#07ffea" style="animation: fft1 0.85s ease-in-out infinite;" />
-      <rect x="98"  width="9" rx="1.5" fill="#07ffea" style="animation: fft2 0.65s ease-in-out infinite;" />
-      <rect x="112" width="9" rx="1.5" fill="#07ffea" style="animation: fft3 0.95s ease-in-out infinite;" />
-      <rect x="126" width="9" rx="1.5" fill="#07ffea" style="animation: fft4 0.75s ease-in-out infinite;" />
-      <rect x="140" width="9" rx="1.5" fill="#07ffea" style="animation: fft5 0.85s ease-in-out infinite;" />
-      <rect x="154" width="9" rx="1.5" fill="#07ffea" style="animation: fft6 1.05s ease-in-out infinite;" />
-      <rect x="168" width="9" rx="1.5" fill="#07ffea" style="animation: fft1 0.65s ease-in-out infinite;" />
-      <rect x="182" width="9" rx="1.5" fill="#07ffea" style="animation: fft2 1.15s ease-in-out infinite;" />
-      <rect x="196" width="9" rx="1.5" fill="#07ffea" style="animation: fft3 0.75s ease-in-out infinite;" />
-      <rect x="210" width="9" rx="1.5" fill="#07ffea" style="animation: fft4 0.85s ease-in-out infinite;" />
-      <rect x="224" width="9" rx="1.5" fill="#07ffea" style="animation: fft5 0.95s ease-in-out infinite;" />
-      <rect x="238" width="9" rx="1.5" fill="#07ffea" style="animation: fft6 0.75s ease-in-out infinite;" />
-      <rect x="252" width="9" rx="1.5" fill="#07ffea" style="animation: fft1 1.05s ease-in-out infinite;" />
-      <rect x="266" width="9" rx="1.5" fill="#07ffea" style="animation: fft2 0.85s ease-in-out infinite;" />
-      <rect x="280" width="9" rx="1.5" fill="#07ffea" style="animation: fft3 0.75s ease-in-out infinite;" />
-      <rect x="294" width="9" rx="1.5" fill="#07ffea" style="animation: fft4 0.95s ease-in-out infinite;" />
-      <rect x="308" width="9" rx="1.5" fill="#07ffea" style="animation: fft5 0.65s ease-in-out infinite;" />
-      <rect x="322" width="9" rx="1.5" fill="#07ffea" style="animation: fft6 0.85s ease-in-out infinite;" />
+      <!-- Animated FFT Frequency Bars -->
+      <g transform="translate(16, 40)">
+        <rect x="0"   width="10" rx="1.5" fill="#f81f8f" style="animation: fft1 0.75s ease-in-out infinite;" />
+        <rect x="15"  width="10" rx="1.5" fill="#f81f8f" style="animation: fft2 0.65s ease-in-out infinite;" />
+        <rect x="30"  width="10" rx="1.5" fill="#ffd700" style="animation: fft3 0.85s ease-in-out infinite;" />
+        <rect x="45"  width="10" rx="1.5" fill="#ffd700" style="animation: fft4 0.55s ease-in-out infinite;" />
+        <rect x="60"  width="10" rx="1.5" fill="#00f0ff" style="animation: fft5 0.95s ease-in-out infinite;" />
+        <rect x="75"  width="10" rx="1.5" fill="#00f0ff" style="animation: fft6 0.75s ease-in-out infinite;" />
+        <rect x="90"  width="10" rx="1.5" fill="#00f0ff" style="animation: fft1 0.85s ease-in-out infinite;" />
+        <rect x="105" width="10" rx="1.5" fill="#00f0ff" style="animation: fft2 0.65s ease-in-out infinite;" />
+        <rect x="120" width="10" rx="1.5" fill="#00f0ff" style="animation: fft3 0.95s ease-in-out infinite;" />
+        <rect x="135" width="10" rx="1.5" fill="#00f0ff" style="animation: fft4 0.75s ease-in-out infinite;" />
+        <rect x="150" width="10" rx="1.5" fill="#00f0ff" style="animation: fft5 0.85s ease-in-out infinite;" />
+        <rect x="165" width="10" rx="1.5" fill="#00f0ff" style="animation: fft6 1.05s ease-in-out infinite;" />
+        <rect x="180" width="10" rx="1.5" fill="#00f0ff" style="animation: fft1 0.65s ease-in-out infinite;" />
+        <rect x="195" width="10" rx="1.5" fill="#00f0ff" style="animation: fft2 1.15s ease-in-out infinite;" />
+        <rect x="210" width="10" rx="1.5" fill="#00f0ff" style="animation: fft3 0.75s ease-in-out infinite;" />
+        <rect x="225" width="10" rx="1.5" fill="#00f0ff" style="animation: fft4 0.85s ease-in-out infinite;" />
+        <rect x="240" width="10" rx="1.5" fill="#00f0ff" style="animation: fft5 0.95s ease-in-out infinite;" />
+        <rect x="255" width="10" rx="1.5" fill="#00f0ff" style="animation: fft6 0.75s ease-in-out infinite;" />
+        <rect x="270" width="10" rx="1.5" fill="#00f0ff" style="animation: fft1 1.05s ease-in-out infinite;" />
+        <rect x="285" width="10" rx="1.5" fill="#00f0ff" style="animation: fft2 0.85s ease-in-out infinite;" />
+        <rect x="300" width="10" rx="1.5" fill="#00f0ff" style="animation: fft3 0.75s ease-in-out infinite;" />
+        <rect x="315" width="10" rx="1.5" fill="#00f0ff" style="animation: fft4 0.95s ease-in-out infinite;" />
+        <rect x="330" width="10" rx="1.5" fill="#00f0ff" style="animation: fft5 0.65s ease-in-out infinite;" />
+        <rect x="345" width="10" rx="1.5" fill="#00f0ff" style="animation: fft6 0.85s ease-in-out infinite;" />
+        <rect x="360" width="10" rx="1.5" fill="#00f0ff" style="animation: fft1 0.75s ease-in-out infinite;" />
+      </g>
     </g>
 
-    <!-- Metrics Grid -->
-    <g transform="translate(18, 174)">
-      <!-- RMS Volume -->
-      <rect x="0" y="0" width="184" height="60" rx="6" fill="#101217" stroke="#222834" stroke-width="1" />
-      <text x="12" y="18" class="font-mono" font-size="9" fill="#717c91">RMS VOLUME LEVEL</text>
-      <text x="12" y="38" class="font-mono" font-size="14" font-weight="700" fill="#07ffea">82 %</text>
-      <text x="68" y="38" class="font-mono" font-size="10" fill="#717c91">-12.4 dBFS</text>
-      <text x="12" y="52" class="font-mono" font-size="8" fill="#717c91">WASAPI Loopback</text>
+    <!-- ================= 4 METRICS CARDS (Properly separated transforms) ================= -->
+    <!-- Card 1: RMS Volume (Top-Left) -->
+    <g transform="translate(18, 180)">
+      <rect x="0" y="0" width="198" height="66" rx="7" fill="#0c0e14" stroke="#252c3b" stroke-width="1.2" />
+      <text x="14" y="20" class="font-mono" font-size="10" font-weight="700" fill="#94a3b8">RMS VOLUME LEVEL</text>
+      <text x="14" y="42" class="font-mono" font-size="16" font-weight="800" fill="#00f0ff">82 %</text>
+      <text x="76" y="42" class="font-mono" font-size="11" font-weight="600" fill="#cbd5e1">-12.4 dBFS</text>
+      <text x="14" y="57" class="font-mono" font-size="9" fill="#94a3b8">WASAPI Loopback Capture</text>
+    </g>
 
-      <!-- Bass Kick -->
-      <rect x="198" y="0" width="184" height="60" rx="6" fill="#101217" stroke="#222834" stroke-width="1" />
-      <text x="12" y="18" class="font-mono" font-size="9" fill="#717c91">BASS KICK PULSE</text>
-      <text x="12" y="38" class="font-mono" font-size="14" font-weight="700" fill="#ffe043">BEAT DETECTED</text>
-      <text x="12" y="52" class="font-mono" font-size="8" fill="#717c91">20 - 140 Hz Band Filter</text>
+    <!-- Card 2: Bass Kick (Top-Right) -->
+    <g transform="translate(228, 180)">
+      <rect x="0" y="0" width="198" height="66" rx="7" fill="#0c0e14" stroke="#252c3b" stroke-width="1.2" />
+      <text x="14" y="20" class="font-mono" font-size="10" font-weight="700" fill="#94a3b8">BASS KICK TRIGGER</text>
+      <text x="14" y="42" class="font-mono" font-size="15" font-weight="800" fill="#ffd700">BEAT DETECTED</text>
+      <text x="14" y="57" class="font-mono" font-size="9" fill="#94a3b8">20 - 140 Hz Band FFT</text>
+    </g>
 
-      <!-- UDP Telemetry -->
-      <rect x="0" y="70" width="184" height="60" rx="6" fill="#101217" stroke="#222834" stroke-width="1" />
-      <text x="12" y="88" class="font-mono" font-size="9" fill="#717c91">UDP TELEMETRY</text>
-      <text x="12" y="108" class="font-mono" font-size="14" font-weight="700" fill="#07ffea">40.2 FPS</text>
-      <text x="12" y="122" class="font-mono" font-size="8" fill="#717c91">Port 12345 (Sub-10ms)</text>
+    <!-- Card 3: UDP Telemetry (Bottom-Left) -->
+    <g transform="translate(18, 256)">
+      <rect x="0" y="0" width="198" height="66" rx="7" fill="#0c0e14" stroke="#252c3b" stroke-width="1.2" />
+      <text x="14" y="20" class="font-mono" font-size="10" font-weight="700" fill="#94a3b8">UDP TELEMETRY</text>
+      <text x="14" y="42" class="font-mono" font-size="16" font-weight="800" fill="#00f0ff">40.2 FPS</text>
+      <text x="14" y="57" class="font-mono" font-size="9" fill="#cbd5e1">Port 12345 (Sub-10ms latency)</text>
+    </g>
 
-      <!-- Cover Art HTTP -->
-      <rect x="198" y="70" width="184" height="60" rx="6" fill="#101217" stroke="#222834" stroke-width="1" />
-      <text x="12" y="88" class="font-mono" font-size="9" fill="#717c91">RAW COVER ART</text>
-      <text x="12" y="108" class="font-mono" font-size="14" font-weight="700" fill="#ffffff">32.7 KB</text>
-      <text x="12" y="122" class="font-mono" font-size="8" fill="#717c91">Port 8080 (RGB565 TCP)</text>
+    <!-- Card 4: Cover Art HTTP (Bottom-Right) -->
+    <g transform="translate(228, 256)">
+      <rect x="0" y="0" width="198" height="66" rx="7" fill="#0c0e14" stroke="#252c3b" stroke-width="1.2" />
+      <text x="14" y="20" class="font-mono" font-size="10" font-weight="700" fill="#94a3b8">RAW COVER ART</text>
+      <text x="14" y="42" class="font-mono" font-size="16" font-weight="800" fill="#ffffff">32.7 KB</text>
+      <text x="14" y="57" class="font-mono" font-size="9" fill="#cbd5e1">Port 8080 (128x128 RGB565)</text>
     </g>
 
     <!-- Communication Bridge Status Card -->
-    <g transform="translate(18, 318)">
-      <rect x="0" y="0" width="382" height="114" rx="8" fill="#101217" stroke="#222834" stroke-width="1" />
-      <text x="14" y="20" class="font-sans" font-size="10" font-weight="700" fill="#07ffea">BIDIRECTIONAL WI-FI PROTOCOL</text>
+    <g transform="translate(18, 334)">
+      <rect x="0" y="0" width="408" height="118" rx="8" fill="#0c0e14" stroke="#252c3b" stroke-width="1.2" />
+      <text x="16" y="22" class="font-sans" font-size="11" font-weight="700" fill="#00f0ff">BIDIRECTIONAL WI-FI PROTOCOL</text>
       
-      <text x="14" y="42" class="font-mono" font-size="9" fill="#e6ebf2">PC Host  ──► [UDP:12345] Vol, Beat, Title (40 FPS)</text>
-      <text x="14" y="62" class="font-mono" font-size="9" fill="#e6ebf2">PC Host  ──► [HTTP:8080] 128x128 RGB565 Bitmap</text>
-      <text x="14" y="82" class="font-mono" font-size="9" fill="#ffe043">ESP32    ──► [UDP:12345] Hardware Buttons (⏮ ⏯ ⏭)</text>
-      <text x="14" y="102" class="font-mono" font-size="9" fill="#07ffea">Display  ──► ST7735 128x160 Double-Buffered Portrait RAM</text>
+      <text x="16" y="46" class="font-mono" font-size="10" font-weight="600" fill="#ffffff">PC Host  ──► [UDP:12345] Vol, Beat, Title (40 FPS)</text>
+      <text x="16" y="68" class="font-mono" font-size="10" font-weight="600" fill="#ffffff">PC Host  ──► [HTTP:8080] 128x128 RGB565 Bitmap</text>
+      <text x="16" y="90" class="font-mono" font-size="10" font-weight="700" fill="#ffd700">ESP32    ──► [UDP:12345] Hardware Buttons (⏮ ⏯ ⏭)</text>
+      <text x="16" y="108" class="font-mono" font-size="10" font-weight="600" fill="#00f0ff">Display  ──► ST7735 128x160 Double-Buffered Portrait RAM</text>
     </g>
   </g>
 </svg>

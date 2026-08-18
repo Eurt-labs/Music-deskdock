@@ -1,36 +1,27 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 540" width="100%" height="100%">
   <defs>
     <style>
-      @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap');
+      /* <![CDATA[ */
+      .font-sans { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+      .font-mono { font-family: Consolas, Monaco, "Courier New", monospace; }
 
-      .font-sans { font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
-      .font-mono { font-family: 'JetBrains Mono', Consolas, Monaco, monospace; }
-
-      /* ========================================================= */
-      /* NATURAL & NEUTRAL COLOR ANIMATIONS                         */
-      /* ========================================================= */
-      
-      /* Vinyl Disc Rotation */
       @keyframes spinRecord {
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
       }
 
-      /* Pulsing Beat Border */
       @keyframes neonBeat {
         0%, 100% { stroke: #262a33; stroke-width: 1.5px; }
-        12% { stroke: #d4a373; stroke-width: 3.5px; filter: drop-shadow(0 0 8px rgba(212, 163, 115, 0.45)); }
+        12% { stroke: #d4a373; stroke-width: 3.5px; }
         28% { stroke: #8ab494; stroke-width: 2px; }
         45% { stroke: #262a33; stroke-width: 1.5px; }
       }
 
-      /* Horizontal Marquee Song Title Scroll */
       @keyframes marqueeSlide {
         0% { transform: translateX(0); }
         100% { transform: translateX(-560px); }
       }
 
-      /* Dynamic Equalizer Bar Segments */
       @keyframes eqSeg14 { 0%, 100% { opacity: 0.15; } 12% { opacity: 0.95; fill: #cd7373; } 30% { opacity: 0.15; } }
       @keyframes eqSeg13 { 0%, 100% { opacity: 0.15; } 12% { opacity: 1.00; fill: #cd7373; } 45% { opacity: 0.15; } }
       @keyframes eqSeg12 { 0%, 100% { opacity: 0.20; } 12% { opacity: 1.00; fill: #d4a373; } 50% { opacity: 0.20; } }
@@ -40,23 +31,16 @@
       @keyframes eqSeg8  { 0%, 100% { opacity: 0.90; } 40% { opacity: 0.50; } 75% { opacity: 1.00; } }
       @keyframes eqSeg7  { 0%, 100% { opacity: 1.00; } 35% { opacity: 0.60; } 85% { opacity: 1.00; } }
 
-      /* Play Icon Pulse */
       @keyframes playPulse {
         0%, 100% { fill: #8ab494; transform: scale(1); }
         50% { fill: #a8ceb2; transform: scale(1.08); }
       }
 
-      /* Glass Glare Reflection */
-      @keyframes glassShimmer {
-        0%, 100% { opacity: 0.04; }
-        50% { opacity: 0.09; }
-      }
-
-      .record-spin { transform-origin: 240px 210px; animation: spinRecord 9s linear infinite; }
+      .record-spin { transform-origin: 232px 148px; animation: spinRecord 9s linear infinite; }
       .beat-box { animation: neonBeat 1.25s ease-in-out infinite; }
       .marquee-anim { animation: marqueeSlide 14s linear infinite; }
-      .glass-overlay { animation: glassShimmer 4s ease-in-out infinite; }
-      .play-btn-pulse { transform-origin: 554px 72px; animation: playPulse 2.5s ease-in-out infinite; }
+      .play-btn-pulse { transform-origin: 522px 30px; animation: playPulse 2.5s ease-in-out infinite; }
+      /* ]]> */
     </style>
   </defs>
 
@@ -68,8 +52,8 @@
 
   <!-- Top Title Header -->
   <g transform="translate(42, 44)">
-    <text x="0" y="0" class="font-sans" font-size="15" font-weight="700" fill="#e6ebf2">ST7735 1.8" TFT DISPLAY</text>
-    <text x="186" y="0" class="font-mono" font-size="12" fill="#73a0cd">160 × 128 Landscape  •  Double-Buffered RAM</text>
+    <text x="0" y="0" class="font-sans" font-size="15" font-weight="700" fill="#e6ebf2">ST7735 1.8&quot; TFT DISPLAY</text>
+    <text x="186" y="0" class="font-mono" font-size="12" fill="#73a0cd">160 x 128 Landscape • Double-Buffered RAM</text>
     
     <!-- Badges -->
     <rect x="510" y="-14" width="124" height="22" rx="4" fill="#15261d" stroke="#2e543d" stroke-width="1" />
@@ -79,11 +63,8 @@
 
   <line x1="42" y1="62" x2="678" y2="62" stroke="#262b35" stroke-width="1" />
 
-  <!-- ========================================================= -->
-  <!-- PHYSICAL TFT MODULE BOARD & BEZEL                         -->
-  <!-- ========================================================= -->
+  <!-- PCB Carrier Substrate -->
   <g transform="translate(42, 80)">
-    <!-- PCB Carrier Substrate (Matte Slate-Blue with Gold Traces) -->
     <rect x="0" y="0" width="636" height="412" rx="12" fill="#1f232b" stroke="#323846" stroke-width="1.5" />
     
     <!-- Mounting Holes with Copper Ground Rings -->
@@ -92,7 +73,7 @@
     <circle cx="16" cy="396" r="7" fill="#131519" stroke="#9e7c48" stroke-width="1.5" />
     <circle cx="620" cy="396" r="7" fill="#131519" stroke="#9e7c48" stroke-width="1.5" />
 
-    <!-- Top Pin Header Legend (SPI VSPI Bus) -->
+    <!-- Top Pin Header Legend -->
     <g transform="translate(110, 18)" class="font-mono" font-size="9" fill="#60697a">
       <text x="0" y="0">VCC</text>
       <text x="45" y="0">GND</text>
@@ -107,44 +88,35 @@
     <!-- Metal Screen Bezel -->
     <rect x="22" y="32" width="592" height="358" rx="8" fill="#0d0f12" stroke="#252a34" stroke-width="2" />
     
-    <!-- ======================================================= -->
-    <!-- ACTIVE ST7735 LCD SCREEN SURFACE (160x128 Aspect Ratio) -->
-    <!-- ======================================================= -->
+    <!-- Active ST7735 LCD Screen Surface -->
     <g transform="translate(28, 38)">
-      <!-- Screen Background Base -->
       <rect x="0" y="0" width="580" height="346" fill="#111317" rx="4" />
 
-      <!-- ----------------------------------------------------- -->
-      <!-- 1. LEFT 128x128 (464 x 346 px) ALBUM ARTWORK VIEW     -->
-      <!-- ----------------------------------------------------- -->
+      <!-- Left Album Artwork View -->
       <g>
         <clipPath id="albumClip">
           <rect x="0" y="0" width="464" height="346" rx="4" />
         </clipPath>
         
         <g clip-path="url(#albumClip)">
-          <!-- Album Art Background -->
           <rect x="0" y="0" width="464" height="346" fill="#14171d" />
 
-          <!-- Vinyl Disc Graphic -->
+          <!-- Vinyl Record Graphic -->
           <g class="record-spin">
-            <!-- Vinyl Outer Grooves -->
             <circle cx="232" cy="148" r="126" fill="#181b22" stroke="#222630" stroke-width="2.5" />
             <circle cx="232" cy="148" r="110" fill="#13161c" stroke="#1d212b" stroke-width="1.5" />
             <circle cx="232" cy="148" r="94"  fill="#161920" stroke="#20242e" stroke-width="1.5" />
             <circle cx="232" cy="148" r="78"  fill="#14161c" stroke="#1d212b" stroke-width="1.5" />
             <circle cx="232" cy="148" r="62"  fill="#171a22" stroke="#222630" stroke-width="1.5" />
             
-            <!-- Vinyl Center Label (Warm Amber & Earth Tones) -->
             <circle cx="232" cy="148" r="44" fill="#a47242" stroke="#d4a373" stroke-width="2" />
             <circle cx="232" cy="148" r="10" fill="#0d0f12" />
             
-            <!-- Vinyl Grooves Sheen Lines -->
             <line x1="232" y1="28" x2="232" y2="268" stroke="#353b49" stroke-width="1.5" opacity="0.35" />
             <line x1="112" y1="148" x2="352" y2="148" stroke="#353b49" stroke-width="1.5" opacity="0.35" />
           </g>
 
-          <!-- Dynamic Pulsing Neon Beat Border on Album Cover -->
+          <!-- Dynamic Pulsing Beat Border -->
           <rect x="3" y="3" width="458" height="286" rx="2" fill="none" class="beat-box" />
 
           <!-- Bottom Marquee Song Title Strip Overlay -->
@@ -157,17 +129,14 @@
               <rect x="12" y="292" width="440" height="54" />
             </clipPath>
             <g class="marquee-anim">
-              <text x="12" y="326" class="font-sans" font-size="16" font-weight="700" fill="#e6ebf2">🎵 The Weeknd - Blinding Lights   •   Album: After Hours   •   📡 WASAPI Loopback 44.1kHz   •   🎵 The Weeknd - Blinding Lights</text>
+              <text x="12" y="326" class="font-sans" font-size="16" font-weight="700" fill="#e6ebf2">The Weeknd - Blinding Lights • Album: After Hours • WASAPI Loopback 44.1kHz • The Weeknd - Blinding Lights</text>
             </g>
           </g>
         </g>
       </g>
 
-      <!-- ----------------------------------------------------- -->
-      <!-- 2. RIGHT 32px (116 px) SIDE PANEL & VOLUME EQUALIZER  -->
-      <!-- ----------------------------------------------------- -->
+      <!-- Right Side Panel & Volume Equalizer -->
       <g transform="translate(464, 0)">
-        <!-- Side Panel Background -->
         <rect x="0" y="0" width="116" height="346" fill="#15171d" />
         <line x1="0" y1="0" x2="0" y2="346" stroke="#282d38" stroke-width="1.5" />
 
@@ -180,44 +149,27 @@
         <!-- Vertical Volume Visualizer Container Frame -->
         <rect x="32" y="74" width="52" height="236" rx="4" fill="#0d0f12" stroke="#292e39" stroke-width="1.2" />
 
-        <!-- Segmented EQ Level Blocks (14 segments from bottom to top) -->
+        <!-- Segmented EQ Level Blocks -->
         <g transform="translate(36, 78)">
-          <!-- Segment 14 (Peak Red) -->
           <rect x="0" y="0"   width="44" height="11" rx="1.5" fill="#cd7373" style="animation: eqSeg14 1.25s ease-in-out infinite;" />
-          <!-- Segment 13 (Peak Red) -->
           <rect x="0" y="16"  width="44" height="11" rx="1.5" fill="#cd7373" style="animation: eqSeg13 1.25s ease-in-out infinite;" />
-          <!-- Segment 12 (Amber Warning) -->
           <rect x="0" y="32"  width="44" height="11" rx="1.5" fill="#d4a373" style="animation: eqSeg12 1.25s ease-in-out infinite;" />
-          <!-- Segment 11 (Amber Warning) -->
           <rect x="0" y="48"  width="44" height="11" rx="1.5" fill="#d4a373" style="animation: eqSeg11 1.25s ease-in-out infinite;" />
-          <!-- Segment 10 (Amber Warning) -->
           <rect x="0" y="64"  width="44" height="11" rx="1.5" fill="#d4a373" style="animation: eqSeg10 1.25s ease-in-out infinite;" />
-          <!-- Segment 9 (Sage Green) -->
           <rect x="0" y="80"  width="44" height="11" rx="1.5" fill="#8ab494" style="animation: eqSeg9 1.25s ease-in-out infinite;" />
-          <!-- Segment 8 (Sage Green) -->
           <rect x="0" y="96"  width="44" height="11" rx="1.5" fill="#8ab494" style="animation: eqSeg8 1.25s ease-in-out infinite;" />
-          <!-- Segment 7 (Sage Green) -->
           <rect x="0" y="112" width="44" height="11" rx="1.5" fill="#8ab494" style="animation: eqSeg7 1.25s ease-in-out infinite;" />
-          <!-- Segment 6 (Sage Green) -->
           <rect x="0" y="128" width="44" height="11" rx="1.5" fill="#8ab494" opacity="1.0" />
-          <!-- Segment 5 (Sage Green) -->
           <rect x="0" y="144" width="44" height="11" rx="1.5" fill="#8ab494" opacity="1.0" />
-          <!-- Segment 4 (Sage Green) -->
           <rect x="0" y="160" width="44" height="11" rx="1.5" fill="#8ab494" opacity="1.0" />
-          <!-- Segment 3 (Sage Green) -->
           <rect x="0" y="176" width="44" height="11" rx="1.5" fill="#8ab494" opacity="1.0" />
-          <!-- Segment 2 (Sage Green) -->
           <rect x="0" y="192" width="44" height="11" rx="1.5" fill="#8ab494" opacity="1.0" />
-          <!-- Segment 1 (Sage Green Base) -->
           <rect x="0" y="208" width="44" height="11" rx="1.5" fill="#8ab494" opacity="1.0" />
         </g>
 
-        <!-- Volume Level dB Readout -->
+        <!-- Volume Level Readout -->
         <text x="36" y="330" class="font-mono" font-size="11" font-weight="700" fill="#8ab494">84% VOL</text>
       </g>
-
-      <!-- Glass Screen Glossy Angle Reflection -->
-      <polygon points="0,0 280,0 60,346 0,346" fill="#ffffff" class="glass-overlay" />
     </g>
   </g>
 </svg>

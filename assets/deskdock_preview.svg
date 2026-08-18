@@ -1,40 +1,32 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 480" width="100%" height="100%">
   <defs>
     <style>
-      @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&amp;family=Plus+Jakarta+Sans:wght@500;600;700&amp;display=swap');
+      /* <![CDATA[ */
+      .font-sans { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+      .font-mono { font-family: Consolas, Monaco, "Courier New", monospace; }
       
-      .font-sans { font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
-      .font-mono { font-family: 'JetBrains Mono', Consolas, Monaco, monospace; }
-      
-      /* Subtle animations with natural & neutral tones */
       @keyframes spinDisc {
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
       }
       @keyframes beatGlow {
         0%, 100% { stroke: #2c313a; stroke-width: 1px; }
-        15% { stroke: #d4a373; stroke-width: 2.5px; filter: drop-shadow(0 0 4px rgba(212,163,115,0.4)); }
+        15% { stroke: #d4a373; stroke-width: 2.5px; }
         35% { stroke: #2c313a; stroke-width: 1px; }
       }
       @keyframes beatLed {
         0%, 100% { fill: #2d4536; }
-        15% { fill: #8ab494; filter: drop-shadow(0 0 6px rgba(138,180,148,0.8)); }
+        15% { fill: #8ab494; }
         35% { fill: #2d4536; }
       }
       @keyframes syncLed {
         0%, 100% { fill: #486581; opacity: 0.6; }
-        50% { fill: #73a0cd; opacity: 1.0; filter: drop-shadow(0 0 4px rgba(115,160,205,0.6)); }
+        50% { fill: #73a0cd; opacity: 1.0; }
       }
       @keyframes marqueeScroll {
         0% { transform: translateX(0px); }
         100% { transform: translateX(-400px); }
       }
-      @keyframes eqBar1 { 0%, 100% { height: 35px; } 50% { height: 110px; } }
-      @keyframes eqBar2 { 0%, 100% { height: 85px; } 50% { height: 40px; } }
-      @keyframes eqBar3 { 0%, 100% { height: 60px; } 50% { height: 130px; } }
-      @keyframes eqBar4 { 0%, 100% { height: 115px; } 50% { height: 50px; } }
-      @keyframes eqBar5 { 0%, 100% { height: 45px; } 50% { height: 95px; } }
-      
       @keyframes fft1 { 0%, 100% { height: 18px; } 50% { height: 58px; } }
       @keyframes fft2 { 0%, 100% { height: 48px; } 50% { height: 22px; } }
       @keyframes fft3 { 0%, 100% { height: 35px; } 50% { height: 62px; } }
@@ -47,6 +39,7 @@
       .led-beat { animation: beatLed 1.2s ease-in-out infinite; }
       .led-sync { animation: syncLed 2.4s ease-in-out infinite; }
       .marquee-text { animation: marqueeScroll 12s linear infinite; }
+      /* ]]> */
     </style>
   </defs>
 
@@ -67,28 +60,22 @@
 
   <line x1="36" y1="72" x2="804" y2="72" stroke="#2c313a" stroke-width="1" />
 
-  <!-- ========================================================= -->
-  <!-- LEFT: PHYSICAL ESP32 DESKDOCK HARDWARE ENCLOSURE          -->
-  <!-- ========================================================= -->
+  <!-- LEFT: PHYSICAL ESP32 DESKDOCK HARDWARE ENCLOSURE -->
   <g transform="translate(36, 90)">
-    <!-- Main Enclosure -->
     <rect x="0" y="0" width="374" height="344" rx="14" fill="#232730" stroke="#363c48" stroke-width="2" />
     
-    <!-- Screws -->
     <circle cx="14" cy="14" r="3" fill="#17191f" stroke="#434a58" stroke-width="1" />
     <circle cx="360" cy="14" r="3" fill="#17191f" stroke="#434a58" stroke-width="1" />
     <circle cx="14" cy="330" r="3" fill="#17191f" stroke="#434a58" stroke-width="1" />
     <circle cx="360" cy="330" r="3" fill="#17191f" stroke="#434a58" stroke-width="1" />
 
-    <!-- Top Chassis Subtitle -->
-    <text x="20" y="24" class="font-mono" font-size="10" fill="#6c7688">ESP32 DEVKIT V1  •  ST7735 160×128 TFT</text>
+    <text x="20" y="24" class="font-mono" font-size="10" fill="#6c7688">ESP32 DEVKIT V1  •  ST7735 160x128 TFT</text>
 
     <!-- ST7735 Display Outer Bezel -->
     <rect x="18" y="34" width="338" height="232" rx="6" fill="#0e1013" stroke="#2c313b" stroke-width="1.5" />
     
     <!-- Screen Viewport -->
     <g transform="translate(20, 36)">
-      <!-- Left: Album Art View (250x194) -->
       <rect x="0" y="0" width="250" height="194" fill="#121418" />
       
       <!-- Vinyl Art -->
@@ -97,7 +84,6 @@
         <circle cx="125" cy="97" r="66" fill="#14161b" stroke="#22252c" stroke-width="1" />
         <circle cx="125" cy="97" r="54" fill="#181a20" stroke="#242831" stroke-width="1" />
         <circle cx="125" cy="97" r="42" fill="#13151a" stroke="#20242c" stroke-width="1" />
-        <!-- Label & Spindle Hub -->
         <circle cx="125" cy="97" r="28" fill="#a06e3c" stroke="#d4a373" stroke-width="1.5" />
         <circle cx="125" cy="97" r="6" fill="#0e1013" />
         <line x1="125" y1="24" x2="125" y2="170" stroke="#424956" stroke-width="1" opacity="0.3" />
@@ -107,17 +93,15 @@
       <!-- Pulsing Neon Beat Frame -->
       <rect x="1" y="1" width="248" height="192" fill="none" class="beat-frame" />
 
-      <!-- Right: Side Panel (84px width) -->
+      <!-- Right: Side Panel -->
       <rect x="250" y="0" width="84" height="228" fill="#16181f" />
       <line x1="250" y1="0" x2="250" y2="228" stroke="#2d323e" stroke-width="1" />
 
-      <!-- Play Status Icon -->
       <polygon points="288,14 288,26 298,20" fill="#8ab494" />
 
       <!-- Side Panel Audio Equalizer Level Meter -->
       <rect x="272" y="38" width="40" height="150" fill="#0f1115" stroke="#2c313a" stroke-width="1" rx="3" />
       
-      <!-- EQ Segment Bars -->
       <rect x="276" y="160" width="32" height="6" fill="#8ab494" rx="1" />
       <rect x="276" y="150" width="32" height="6" fill="#8ab494" rx="1" />
       <rect x="276" y="140" width="32" height="6" fill="#8ab494" rx="1" />
@@ -135,62 +119,51 @@
       <rect x="0" y="194" width="250" height="34" fill="#161920" />
       <line x1="0" y1="194" x2="250" y2="194" stroke="#73a0cd" stroke-width="1.2" />
       
-      <!-- Marquee Viewport with clip -->
       <g clip-path="url(#marqueeClip)">
         <clipPath id="marqueeClip">
           <rect x="8" y="194" width="234" height="34" />
         </clipPath>
         <g class="marquee-text">
-          <text x="8" y="216" class="font-sans" font-size="11" font-weight="600" fill="#e6ebf2">Daft Punk - Get Lucky (feat. Pharrell Williams)   •   Album: Random Access Memories   •   Daft Punk - Get Lucky</text>
+          <text x="8" y="216" class="font-sans" font-size="11" font-weight="600" fill="#e6ebf2">Daft Punk - Get Lucky (feat. Pharrell Williams) • Album: Random Access Memories • Daft Punk - Get Lucky</text>
         </g>
       </g>
     </g>
 
     <!-- Status LEDs on Hardware Chassis -->
     <g transform="translate(20, 276)">
-      <!-- Blue Sync LED -->
       <circle cx="30" cy="8" r="4.5" fill="#73a0cd" class="led-sync" />
       <text x="42" y="12" class="font-mono" font-size="9" fill="#8791a0">SYNC</text>
 
-      <!-- Green Beat LED -->
       <circle cx="140" cy="8" r="4.5" fill="#8ab494" class="led-beat" />
       <text x="152" y="12" class="font-mono" font-size="9" fill="#8791a0">BEAT</text>
 
-      <!-- Red Idle LED -->
       <circle cx="250" cy="8" r="4.5" fill="#522424" />
       <text x="262" y="12" class="font-mono" font-size="9" fill="#5c6472">IDLE</text>
     </g>
 
     <!-- Tactile Push Buttons -->
     <g transform="translate(20, 298)">
-      <!-- Button 1: PREV (D25) -->
       <rect x="0" y="0" width="102" height="30" rx="5" fill="#2b303b" stroke="#3d4454" stroke-width="1" />
-      <text x="18" y="19" class="font-sans" font-size="10" font-weight="700" fill="#d8dee9">◀ PREV (D25)</text>
+      <text x="18" y="19" class="font-sans" font-size="10" font-weight="700" fill="#d8dee9">PREV (D25)</text>
 
-      <!-- Button 2: PLAY (D26) -->
       <rect x="116" y="0" width="102" height="30" rx="5" fill="#323846" stroke="#d4a373" stroke-width="1.2" />
-      <text x="132" y="19" class="font-sans" font-size="10" font-weight="700" fill="#d4a373">▶|| PLAY (D26)</text>
+      <text x="132" y="19" class="font-sans" font-size="10" font-weight="700" fill="#d4a373">PLAY (D26)</text>
 
-      <!-- Button 3: NEXT (D33) -->
       <rect x="232" y="0" width="102" height="30" rx="5" fill="#2b303b" stroke="#3d4454" stroke-width="1" />
-      <text x="248" y="19" class="font-sans" font-size="10" font-weight="700" fill="#d8dee9">NEXT ▶ (D33)</text>
+      <text x="248" y="19" class="font-sans" font-size="10" font-weight="700" fill="#d8dee9">NEXT (D33)</text>
     </g>
   </g>
 
-  <!-- ========================================================= -->
-  <!-- RIGHT: REAL-TIME TELEMETRY & SYSTEM METRICS PANEL         -->
-  <!-- ========================================================= -->
+  <!-- RIGHT: REAL-TIME TELEMETRY & SYSTEM METRICS PANEL -->
   <g transform="translate(432, 90)">
     <rect x="0" y="0" width="372" height="344" rx="12" fill="#17191f" stroke="#2c313a" stroke-width="1.2" />
     
-    <!-- Title -->
     <text x="20" y="28" class="font-sans" font-size="12" font-weight="700" fill="#73a0cd">LIVE AUDIO &amp; TELEMETRY STREAM</text>
 
     <!-- FFT Audio Spectrum Card -->
     <rect x="18" y="42" width="336" height="98" rx="8" fill="#121418" stroke="#252932" stroke-width="1" />
     <text x="30" y="60" class="font-mono" font-size="10" fill="#6c7688">WASAPI Loopback FFT Spectrum (20 Hz - 16 kHz)</text>
 
-    <!-- Animated FFT Frequency Bars -->
     <g transform="translate(30, 70)">
       <rect x="0" y="12" width="8" height="42" fill="#d4a373" rx="1" style="animation: fft1 0.8s ease-in-out infinite;" />
       <rect x="12" y="8" width="8" height="48" fill="#d4a373" rx="1" style="animation: fft2 0.7s ease-in-out infinite;" />
@@ -214,35 +187,30 @@
       <rect x="228" y="42" width="8" height="12" fill="#8ab494" rx="1" style="animation: fft2 0.9s ease-in-out infinite;" />
     </g>
 
-    <!-- Metrics Grid (2x2) -->
+    <!-- Metrics Grid -->
     <g transform="translate(18, 152)">
-      <!-- Metric 1: RMS Volume -->
       <rect x="0" y="0" width="162" height="52" rx="6" fill="#131519" stroke="#252932" stroke-width="1" />
       <text x="12" y="16" class="font-mono" font-size="9" fill="#6c7688">RMS VOLUME</text>
       <text x="12" y="32" class="font-mono" font-size="13" font-weight="700" fill="#8ab494">78 %</text>
       <text x="60" y="32" class="font-mono" font-size="10" fill="#8791a0">-13.8 dBFS</text>
       <text x="12" y="46" class="font-mono" font-size="9" fill="#8791a0">WASAPI Loopback</text>
 
-      <!-- Metric 2: Beat Detection -->
       <rect x="174" y="0" width="162" height="52" rx="6" fill="#131519" stroke="#252932" stroke-width="1" />
       <text x="186" y="16" class="font-mono" font-size="9" fill="#6c7688">BASS KICK</text>
       <text x="186" y="32" class="font-mono" font-size="13" font-weight="700" fill="#d4a373">TRIGGERED</text>
       <text x="186" y="46" class="font-mono" font-size="9" fill="#8791a0">20-140 Hz Band</text>
 
-      <!-- Metric 3: UDP Telemetry -->
       <rect x="0" y="60" width="162" height="52" rx="6" fill="#131519" stroke="#252932" stroke-width="1" />
       <text x="12" y="76" class="font-mono" font-size="9" fill="#6c7688">UDP TELEMETRY</text>
       <text x="12" y="92" class="font-mono" font-size="13" font-weight="700" fill="#73a0cd">40.2 FPS</text>
       <text x="12" y="106" class="font-mono" font-size="9" fill="#8791a0">Port 12345 (Sub-10ms)</text>
 
-      <!-- Metric 4: Cover Art Stream -->
       <rect x="174" y="60" width="162" height="52" rx="6" fill="#131519" stroke="#252932" stroke-width="1" />
       <text x="186" y="76" class="font-mono" font-size="9" fill="#6c7688">RAW COVER ART</text>
       <text x="186" y="92" class="font-mono" font-size="13" font-weight="700" fill="#e6ebf2">32.7 KB</text>
       <text x="186" y="106" class="font-mono" font-size="9" fill="#8791a0">Port 8080 (RGB565 TCP)</text>
     </g>
 
-    <!-- Protocol Diagram Bar -->
     <g transform="translate(18, 276)">
       <rect x="0" y="0" width="336" height="54" rx="6" fill="#121418" stroke="#252932" stroke-width="1" />
       <text x="12" y="16" class="font-mono" font-size="9" fill="#6c7688">BIDIRECTIONAL WI-FI BRIDGE</text>

@@ -39,6 +39,20 @@ The Python script captures desktop audio in real time, extracts volume levels an
 
 ---
 
+## 📺 ESP32 Display Layout & UI Architecture
+
+<p align="center">
+  <img src="assets/esp32_display_demo.svg" alt="ST7735 Display UI Animation Demo" width="100%" />
+</p>
+
+The 1.8" ST7735 display runs in landscape mode (160×128 pixels) with a custom double-buffered RAM canvas (`GFXcanvas16`):
+- **Left 128×128 Viewport**: Displays live 16-bit RGB565 album cover artwork with a dynamic pulsing neon border on bass kick beats.
+- **Right 32px Side Panel**: Features a real-time playback status icon and a 14-segment vertical volume visualizer equalizer bar.
+- **Bottom 18px Marquee**: Smoothly scrolls long track names and artist metadata across the screen with zero visual tearing.
+
+---
+
+
 ## 📌 Hardware Pin Layout
 
 | Component | Pin Function | ESP32 Pin | GPIO | Pin Mode | Description |

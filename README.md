@@ -1,10 +1,15 @@
-# ESP32 Music Visualizer & Hardware Media Controller
+# ESP32 Music Deskdock - Live Album Cover & Audio Visualizer
+
+<p align="center">
+  <img src="assets/deskdock_demo.gif" alt="ESP32 Music Deskdock Live Preview" width="100%" />
+</p>
 
 A real-time desktop music companion built with an **ESP32 DevKit V1** and a 1.8" ST7735 TFT display (160x128). The ESP32 pairs over Wi-Fi with a Python background app running on your Windows PC. 
 
 The Python script captures desktop audio in real time, extracts volume levels and bass beats, pulls the currently playing track's title and album art (from Spotify, YouTube, Apple Music, VLC, browser tabs, etc.), and streams the telemetry to the ESP32. The ESP32 also features 3 hardware push buttons that allow you to control playback (Play/Pause, Next, Previous) directly from your desk.
 
 ---
+
 
 ## 🛠️ System Architecture
 

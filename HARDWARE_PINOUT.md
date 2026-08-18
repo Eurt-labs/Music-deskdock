@@ -38,7 +38,7 @@ This document provides the exact pin connections, electrical requirements, and w
 
 ### A. ST7735 1.8" TFT Display (SPI)
 - **Controller IC**: ST7735 / ST7735R (Black Tab variant, `INITR_BLACKTAB`).
-- **Screen Resolution**: 160 x 128 pixels in landscape orientation (`tft.setRotation(1)`).
+- **Screen Resolution**: 128 x 160 pixels in portrait orientation (`tft.setRotation(0)`).
 - **SPI Bus**: Uses the ESP32 hardware VSPI peripheral (SCK on GPIO 18, MOSI on GPIO 23) for maximum frame transfer speeds.
 - **Power**: Connect VCC and LED (Backlight) to the ESP32 3.3V rail. Do not connect logic pins to 5V.
 

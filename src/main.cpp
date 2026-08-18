@@ -4,7 +4,7 @@
  * 
  * Hardware:
  * - ESP32 DevKit V1 (Xtensa Dual-Core 240 MHz)
- * - 1.8" ST7735 TFT LCD Display (160x128 resolution, SPI interface)
+ * - 1.8" ST7735 TFT LCD Display (128x160 portrait resolution, SPI interface)
  * - 3x Tactile Push Buttons (Previous, Play/Pause, Next)
  * - 3x Status LEDs (Blue: Wi-Fi/Sync, Green: Beat Pulse, Red: Idle/Standby)
  * 
@@ -13,7 +13,7 @@
  * 1. Double-Buffered Rendering (Zero Screen Flicker):
  *    - Direct-to-screen drawing on SPI displays can cause visible tearing and flashing.
  *    - We allocate an off-screen 16-bit framebuffer canvas (`GFXcanvas16`) in ESP32 RAM:
- *      160 x 128 pixels x 2 bytes = 40,960 bytes (~40 KB).
+ *      128 x 160 pixels x 2 bytes = 40,960 bytes (~40 KB).
  *    - All UI components (cover art, borders, volume bar, marquee text) are rendered
  *      in memory first, then transferred to the display in a single block write.
  * 
@@ -78,8 +78,8 @@ const uint16_t UDP_PORT = 12345;
 // Initialize ST7735 display object on hardware SPI pins
 Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_DC, TFT_MOSI, TFT_SCLK, TFT_RST);
 
-// Double-buffer canvas (160x128 pixels in 16-bit color = 40.9 KB in RAM)
-GFXcanvas16 canvas(160, 128);
+// Double-buffer canvas (128x160 pixels in 16-bit color = 40.9 KB in RAM)
+GFXcanvas16 canvas(128, 160);
 
 // Dedicated RAM buffer holding 128x128 raw RGB565 album cover pixels (32.7 KB in RAM)
 uint16_t coverBuffer[128 * 128];
@@ -249,7 +249,7 @@ void drawBootScreen(const char* statusMsg) {
   
   tft.setCursor(10, 15);
   tft.println("ESP32 MUSIC SYSTEM");
-  tft.drawFastHLine(10, 26, 140, COLOR_MAGENTA);
+  tft.drawFastHLine(10, 26, 108, COLOR_MAGENTA);
   
   tft.setTextColor(COLOR_WHITE);
   tft.setCursor(10, 40);
@@ -287,9 +287,9 @@ void setup() {
   // 3. Initialize default cover art graphic
   drawDefaultCover();
 
-  // 4. Initialize ST7735 Display (160x128 Landscape Mode)
+  // 4. Initialize ST7735 Display (128x160 Portrait Mode)
   tft.initR(INITR_BLACKTAB); 
-  tft.setRotation(1); // Rotation 1 = 160 width x 128 height
+  tft.setRotation(0); // Rotation 0 = 128 width x 160 height (Portrait)
   tft.fillScreen(COLOR_BG);
 
   drawBootScreen("Connecting Wi-Fi...");
@@ -344,12 +344,13 @@ void setup() {
 // =============================================================================
 /**
  * Composes all visual UI elements into the `canvas` double-buffer in RAM:
- * 1. Left 128x128 pixels: Album cover bitmap + dynamic beat neon borders.
- * 2. Right 32 pixels: Side panel with volume level equalizer bar & play indicator.
- * 3. Bottom 18-pixel strip: Horizontal scrolling marquee showing song title & artist.
- * 4. LED outputs: Blue (Wi-Fi), Green (PWM Beat pulse), Red (Idle timeout).
+ * 1. Top 128x128 pixels: Album cover bitmap + dynamic beat neon borders.
+ * 2. Bottom 32 pixels (Y = 128 to 159): Control & info panel:
+ *    - Song title & artist scrolling marquee text.
+ *    - Play/Idle status indicator & horizontal volume equalizer bar.
+ * 3. LED outputs: Blue (Wi-Fi), Green (PWM Beat pulse), Red (Idle timeout).
  * 
- * Finally, transfers the complete 160x128 framebuffer to the display over SPI.
+ * Finally, transfers the complete 128x160 framebuffer to the display over SPI.
  */
 void renderFrame(uint8_t volume, bool beat, const String& songTitle, bool isConnected) {
   canvas.fillScreen(COLOR_BG);
@@ -368,7 +369,7 @@ void renderFrame(uint8_t volume, bool beat, const String& songTitle, bool isConn
     analogWrite(PIN_LED_GREEN, 0);
   }
 
-  // --- 1. LEFT 128x128 ALBUM COVER ART ---
+  // --- 1. TOP 128x128 ALBUM COVER ART ---
   if (!isIdle) {
     canvas.drawRGBBitmap(0, 0, coverBuffer, 128, 128);
     // Draw pulsing neon frame on detected beat kicks
@@ -387,26 +388,15 @@ void renderFrame(uint8_t volume, bool beat, const String& songTitle, bool isConn
     canvas.print("~ WAITING ~");
   }
 
-  // --- 2. RIGHT 32-PIXEL SIDE PANEL (X = 128 to 159) ---
-  canvas.fillRect(128, 0, 32, 128, COLOR_DARK_GRAY);
-  canvas.drawFastVLine(128, 0, 128, COLOR_MAGENTA);
+  // --- 2. BOTTOM 32-PIXEL CONTROL & INFO PANEL (Y = 128 to 159) ---
+  canvas.fillRect(0, 128, 128, 32, COLOR_DARK_GRAY);
+  canvas.drawFastHLine(0, 128, 128, COLOR_MAGENTA);
 
-  // Play / Status Indicator Symbol
-  canvas.setTextColor(isIdle ? COLOR_YELLOW : COLOR_CYAN);
-  canvas.setTextSize(1);
-  canvas.setCursor(138, 8);
-  canvas.print((char)16); // ASCII right-pointing triangle / play symbol
-
-  // Vertical Audio Volume Equalizer Bar (Height maps 0-100% volume to 0-80 pixels)
-  int barH = map(volume, 0, 100, 0, 80);
-  canvas.fillRect(138, 110 - barH, 12, barH, beat ? COLOR_YELLOW : COLOR_CYAN);
-  canvas.drawRect(138, 30, 12, 80, COLOR_WHITE);
-
-  // --- 3. BOTTOM SCROLLING SONG MARQUEE ---
+  // Song Title Marquee String
   String title = isIdle ? "No Song Playing" : songTitle;
   if (title.length() == 0) title = "Unknown Song";
 
-  const int maxCharsVisible = 18;
+  const int maxCharsVisible = 19;
   String dispText = title;
 
   // Scroll text horizontally if it exceeds visible character limit
@@ -424,15 +414,30 @@ void renderFrame(uint8_t volume, bool beat, const String& songTitle, bool isConn
     scrollPos = 0;
   }
 
-  // Draw semi-opaque bottom banner across the bottom of the cover art
-  canvas.fillRect(0, 110, 128, 18, COLOR_DARK_GRAY);
-  canvas.drawFastHLine(0, 110, 128, COLOR_CYAN);
+  // Display scrolling marquee text
   canvas.setTextColor(COLOR_WHITE);
-  canvas.setCursor(4, 115);
+  canvas.setTextSize(1);
+  canvas.setCursor(6, 133);
   canvas.print(dispText);
 
-  // --- 4. FLUSH DOUBLE-BUFFER TO PHYSICAL TFT DISPLAY ---
-  tft.drawRGBBitmap(0, 0, canvas.getBuffer(), 160, 128);
+  // Subtle separator line
+  canvas.drawFastHLine(4, 144, 120, COLOR_BG);
+
+  // Play / Status Indicator Symbol
+  canvas.setTextColor(isIdle ? COLOR_YELLOW : COLOR_CYAN);
+  canvas.setTextSize(1);
+  canvas.setCursor(6, 148);
+  canvas.print((char)16); // ASCII right-pointing triangle / play symbol
+
+  // Horizontal Audio Volume Equalizer Bar
+  canvas.drawRect(18, 147, 104, 9, COLOR_WHITE);
+  int barW = map(volume, 0, 100, 0, 100);
+  if (barW > 0) {
+    canvas.fillRect(20, 149, barW, 5, beat ? COLOR_YELLOW : COLOR_CYAN);
+  }
+
+  // --- 3. FLUSH DOUBLE-BUFFER TO PHYSICAL TFT DISPLAY ---
+  tft.drawRGBBitmap(0, 0, canvas.getBuffer(), 128, 160);
 }
 
 

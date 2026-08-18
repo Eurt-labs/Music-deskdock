@@ -1,0 +1,128 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 440" width="100%" height="100%">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&amp;family=Plus+Jakarta+Sans:wght@500;700;800&amp;display=swap');
+      
+      .font-sans { font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif; }
+      .font-mono { font-family: 'JetBrains Mono', monospace; }
+
+      @keyframes flowDown {
+        0% { stroke-dashoffset: 24; }
+        100% { stroke-dashoffset: 0; }
+      }
+
+      @keyframes flowUp {
+        0% { stroke-dashoffset: 0; }
+        100% { stroke-dashoffset: 24; }
+      }
+
+      .line-flow-down { stroke-dasharray: 6 6; animation: flowDown 1.2s linear infinite; }
+      .line-flow-up   { stroke-dasharray: 6 6; animation: flowUp 1.2s linear infinite; }
+    </style>
+
+    <linearGradient id="archBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#12141a" />
+      <stop offset="100%" stop-color="#0a0c10" />
+    </linearGradient>
+
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#191d26" />
+      <stop offset="100%" stop-color="#13161e" />
+    </linearGradient>
+  </defs>
+
+  <rect width="880" height="440" rx="16" fill="url(#archBg)" />
+  <rect x="14" y="14" width="852" height="412" rx="14" fill="#13161f" stroke="#252a36" stroke-width="1.2" />
+
+  <!-- Title Header -->
+  <g transform="translate(36, 40)">
+    <text x="0" y="0" class="font-sans" font-size="15" font-weight="800" fill="#e6ebf2">ESP32 MUSIC DESKDOCK - SYSTEM ARCHITECTURE</text>
+    <text x="440" y="0" class="font-mono" font-size="12" fill="#07ffea">PORTRAIT 128x160 PIPELINE</text>
+  </g>
+
+  <line x1="36" y1="54" x2="844" y2="54" stroke="#232833" stroke-width="1" />
+
+  <!-- ================= 1. WINDOWS HOST PC CARD ================= -->
+  <g transform="translate(36, 72)">
+    <rect x="0" y="0" width="370" height="326" rx="12" fill="url(#cardGrad)" stroke="#2f3747" stroke-width="1.5" />
+    
+    <!-- Title -->
+    <rect x="16" y="16" width="338" height="34" rx="6" fill="#101319" stroke="#232834" stroke-width="1" />
+    <text x="30" y="38" class="font-sans" font-size="12" font-weight="700" fill="#07ffea">💻 WINDOWS HOST PC (audio_sender.py)</text>
+
+    <!-- Block 1: WASAPI Loopback -->
+    <rect x="16" y="60" width="338" height="52" rx="6" fill="#101319" stroke="#202530" stroke-width="1" />
+    <text x="28" y="80" class="font-mono" font-size="10" font-weight="700" fill="#ffffff">WASAPI Audio Loopback Capture</text>
+    <text x="28" y="98" class="font-mono" font-size="9" fill="#717c91">RMS Volume (0-100) &amp; FFT Bass Beat (20-140Hz)</text>
+
+    <!-- Block 2: WinRT Media Metadata -->
+    <rect x="16" y="122" width="338" height="52" rx="6" fill="#101319" stroke="#202530" stroke-width="1" />
+    <text x="28" y="142" class="font-mono" font-size="10" font-weight="700" fill="#ffffff">WinRT System Media Controls</text>
+    <text x="28" y="160" class="font-mono" font-size="9" fill="#717c91">Song Title, Artist &amp; 128x128 RGB565 Thumbnail</text>
+
+    <!-- Block 3: Network Servers -->
+    <rect x="16" y="184" width="338" height="60" rx="6" fill="#101319" stroke="#202530" stroke-width="1" />
+    <text x="28" y="204" class="font-mono" font-size="10" font-weight="700" fill="#ffe043">Network Transmission Endpoints</text>
+    <text x="28" y="220" class="font-mono" font-size="9" fill="#e6ebf2">• UDP Port 12345: Fast JSON telemetry (~40 FPS)</text>
+    <text x="28" y="234" class="font-mono" font-size="9" fill="#e6ebf2">• HTTP Port 8080: Raw 32 KB RGB565 cover server</text>
+
+    <!-- Block 4: Button Handler -->
+    <rect x="16" y="254" width="338" height="56" rx="6" fill="#101319" stroke="#202530" stroke-width="1" />
+    <text x="28" y="274" class="font-mono" font-size="10" font-weight="700" fill="#f81f8f">Hardware Button Command Receiver</text>
+    <text x="28" y="294" class="font-mono" font-size="9" fill="#717c91">Triggers WinRT Play/Pause, Next &amp; Previous</text>
+  </g>
+
+  <!-- ================= MIDDLE WI-FI NETWORK BRIDGE ================= -->
+  <g transform="translate(406, 72)">
+    <!-- Bridge Column Background -->
+    <rect x="0" y="0" width="68" height="326" rx="8" fill="#101217" stroke="#202530" stroke-width="1" />
+    <text x="14" y="24" class="font-mono" font-size="9" font-weight="700" fill="#07ffea">WI-FI</text>
+    
+    <!-- Data Stream Lines -->
+    <!-- UDP Telemetry Down -->
+    <line x1="8" y1="86" x2="60" y2="86" stroke="#07ffea" stroke-width="2.5" class="line-flow-down" />
+    <polygon points="56,82 64,86 56,90" fill="#07ffea" />
+
+    <!-- HTTP Cover Art Down -->
+    <line x1="8" y1="148" x2="60" y2="148" stroke="#ffe043" stroke-width="2.5" class="line-flow-down" />
+    <polygon points="56,144 64,148 56,152" fill="#ffe043" />
+
+    <!-- UDP Button Commands Up -->
+    <line x1="60" y1="282" x2="8" y2="282" stroke="#f81f8f" stroke-width="2.5" class="line-flow-up" />
+    <polygon points="12,278 4,282 12,286" fill="#f81f8f" />
+
+    <text x="12" y="102" class="font-mono" font-size="7" fill="#07ffea">UDP:40FPS</text>
+    <text x="12" y="164" class="font-mono" font-size="7" fill="#ffe043">HTTP:32KB</text>
+    <text x="12" y="298" class="font-mono" font-size="7" fill="#f81f8f">BTN CMD</text>
+  </g>
+
+  <!-- ================= 2. ESP32 HARDWARE CONTROLLER CARD ================= -->
+  <g transform="translate(474, 72)">
+    <rect x="0" y="0" width="370" height="326" rx="12" fill="url(#cardGrad)" stroke="#2f3747" stroke-width="1.5" />
+    
+    <!-- Title -->
+    <rect x="16" y="16" width="338" height="34" rx="6" fill="#101319" stroke="#232834" stroke-width="1" />
+    <text x="30" y="38" class="font-sans" font-size="12" font-weight="700" fill="#07ffea">⚡ ESP32 DEVKIT V1 (main.cpp)</text>
+
+    <!-- Block 1: Double Buffer Canvas -->
+    <rect x="16" y="60" width="338" height="52" rx="6" fill="#101319" stroke="#202530" stroke-width="1" />
+    <text x="28" y="80" class="font-mono" font-size="10" font-weight="700" fill="#ffffff">GFXcanvas16 Double-Buffer RAM</text>
+    <text x="28" y="98" class="font-mono" font-size="9" fill="#717c91">128x160 Portrait Buffer (~40 KB) • Zero Screen Tearing</text>
+
+    <!-- Block 2: ST7735 Portrait Display Layout -->
+    <rect x="16" y="122" width="338" height="60" rx="6" fill="#101319" stroke="#202530" stroke-width="1" />
+    <text x="28" y="142" class="font-mono" font-size="10" font-weight="700" fill="#07ffea">ST7735 SPI Display (128x160 Portrait)</text>
+    <text x="28" y="158" class="font-mono" font-size="9" fill="#e6ebf2">• Top 128x128: Cover art + Beat pulsing border</text>
+    <text x="28" y="172" class="font-mono" font-size="9" fill="#e6ebf2">• Bottom 128x32: Song marquee &amp; Volume EQ bar</text>
+
+    <!-- Block 3: Physical Controls & LEDs -->
+    <rect x="16" y="192" width="338" height="52" rx="6" fill="#101319" stroke="#202530" stroke-width="1" />
+    <text x="28" y="212" class="font-mono" font-size="10" font-weight="700" fill="#ffffff">Hardware Navigation Buttons</text>
+    <text x="28" y="228" class="font-mono" font-size="9" fill="#717c91">3x Push Buttons (D25:Prev, D26:Play, D33:Next)</text>
+
+    <!-- Block 4: Status LEDs -->
+    <rect x="16" y="254" width="338" height="56" rx="6" fill="#101319" stroke="#202530" stroke-width="1" />
+    <text x="28" y="274" class="font-mono" font-size="10" font-weight="700" fill="#ffffff">Tri-Color Status Feedback LEDs</text>
+    <text x="28" y="294" class="font-mono" font-size="9" fill="#717c91">D12: Blue (Sync) • D14: Green (Beat PWM) • D27: Red (Idle)</text>
+  </g>
+</svg>

@@ -1,16 +1,20 @@
 # ESP32 Music Deskdock - Live Album Cover & Audio Visualizer
 
 <p align="center">
-  <img src="assets/deskdock_hero.gif" alt="ESP32 Music Deskdock Live Preview" width="100%" />
+  <img src="assets/deskdock_preview.svg" alt="ESP32 Music Deskdock Live Preview" width="100%" />
 </p>
 
-A real-time desktop music companion built with an **ESP32 DevKit V1** and a 1.8" ST7735 TFT display (160x128). The ESP32 pairs over Wi-Fi with a Python background app running on your Windows PC. 
+A real-time desktop music companion built with an **ESP32 DevKit V1** and a 1.8" ST7735 TFT display in **Portrait Mode (128x160)**. The ESP32 pairs over Wi-Fi with a Python background app running on your Windows PC. 
 
 The Python script captures desktop audio in real time, extracts volume levels and bass beats, pulls the currently playing track's title and album art (from Spotify, YouTube, Apple Music, VLC, browser tabs, etc.), and streams the telemetry to the ESP32. The ESP32 also features 3 hardware push buttons that allow you to control playback (Play/Pause, Next, Previous) directly from your desk.
 
 ---
 
 ## 🛠️ System Architecture
+
+<p align="center">
+  <img src="assets/system_architecture.svg" alt="System Architecture Diagram" width="100%" />
+</p>
 
 ```
 ┌────────────────────────────────────────────────────────┐
@@ -27,10 +31,9 @@ The Python script captures desktop audio in real time, extracts volume levels an
 ┌───────────────────────────▼────────────────────────────┐
 │                    ESP32 DevKit V1                     │
 │                                                        │
-│  • 1.8" ST7735 Display (160x128 Double-Buffered RAM)   │
-│    - Left (128x128): Album Art + Pulsing Beat Border   │
-│    - Right (32px): Play/Pause Status & Volume Bar      │
-│    - Bottom: Smooth scrolling song marquee             │
+│  • 1.8" ST7735 Display (128x160 Portrait Double-Buffer)│
+│    - Top (128x128): Album Art + Pulsing Beat Border    │
+│    - Bottom (128x32): Song Marquee & Horizontal Vol Bar│
 │  • 3x Navigation Buttons (Previous, Play/Pause, Next)  │
 │  • 3x Status LEDs (Blue: Sync, Green: Beat, Red: Idle) │
 └────────────────────────────────────────────────────────┘
@@ -41,16 +44,17 @@ The Python script captures desktop audio in real time, extracts volume levels an
 ## 📺 ESP32 Display Layout & UI Architecture
 
 <p align="center">
-  <img src="assets/esp32_display_real.gif" alt="ST7735 Display UI Animation Demo" width="100%" />
+  <img src="assets/esp32_display_demo.svg" alt="ST7735 Display UI Portrait Demo" width="100%" />
 </p>
 
-The 1.8" ST7735 display runs in landscape mode (160×128 pixels) with a custom double-buffered RAM canvas (`GFXcanvas16`):
-- **Left 128×128 Viewport**: Displays live 16-bit RGB565 album cover artwork with a dynamic pulsing neon double border (Neon Magenta outer & Gold Yellow inner) on bass kick beats.
-- **Right 32px Side Panel**: Cyan playback indicator (`►`) and a solid vertical volume equalizer bar rising inside a white frame (Cyan normally, Yellow on beat).
-- **Bottom 18px Marquee**: Smoothly scrolls long track names and artist metadata across the screen over a dark grey banner with a cyan top line.
+The 1.8" ST7735 display runs in **Portrait Mode (128×160 pixels)** with a custom double-buffered RAM canvas (`GFXcanvas16`):
+- **Top 128×128 Viewport**: Displays live 16-bit RGB565 album cover artwork with a dynamic pulsing neon double border (Neon Magenta outer & Gold Yellow inner) on bass kick beats.
+- **Bottom 128×32 Control & Info Panel**:
+  - **Song Title Marquee**: Smoothly scrolls long track names and artist metadata across the screen over a dark grey banner with a magenta top separator.
+  - **Play Status Indicator**: Cyan playback symbol (`►`).
+  - **Horizontal Volume Equalizer Bar**: Responsive horizontal audio level indicator inside a white frame (Cyan normally, Yellow on beat).
 
 ---
-
 
 ## 📁 Project Structure
 
@@ -59,11 +63,15 @@ The 1.8" ST7735 display runs in landscape mode (160×128 pixels) with a custom d
 ├── platformio.ini               # PlatformIO build configuration
 ├── requirements.txt             # Python host dependencies
 ├── HARDWARE_PINOUT.md           # Pin mappings & wiring guide
+├── CUSTOMIZATION_GUIDE.md       # Display, orientation & text customization guide
 ├── README.md                    # Project documentation & architecture
 ├── audio_sender.py              # Windows PC WASAPI transmitter & controller
 ├── assets/
+│   ├── deskdock_preview.svg     # Full deskdock hardware & live stream SVG
+│   ├── esp32_display_demo.svg   # 1:1 ST7735 128x160 portrait display SVG
+│   ├── system_architecture.svg  # End-to-end architecture pipeline diagram
 │   ├── deskdock_hero.gif        # Main hero preview animation
-│   └── esp32_display_real.gif   # 1:1 ST7735 160x128 display UI emulator
+│   └── esp32_display_real.gif   # Display UI emulator
 └── src/
     └── main.cpp                 # ESP32 double-buffered firmware
 ```

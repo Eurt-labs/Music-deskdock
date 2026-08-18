@@ -1,0 +1,192 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 700" width="100%" height="100%">
+  <defs>
+    <!-- Modern Display Typography -->
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&amp;family=Plus+Jakarta+Sans:wght@500;700;800&amp;display=swap');
+      
+      .font-sans { font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif; }
+      .font-mono { font-family: 'JetBrains Mono', monospace; }
+
+      /* Animation Keyframes */
+      @keyframes spinRecord {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+
+      @keyframes neonBeat {
+        0%, 100% { stroke: #2a1b38; stroke-width: 1.5; filter: drop-shadow(0 0 0px transparent); }
+        15% { stroke: #f81f8f; stroke-width: 3.5; filter: drop-shadow(0 0 8px #f81f8f); }
+        35% { stroke: #ffe043; stroke-width: 2.5; filter: drop-shadow(0 0 5px #ffe043); }
+        60% { stroke: #2a1b38; stroke-width: 1.5; filter: drop-shadow(0 0 0px transparent); }
+      }
+
+      @keyframes marqueeSlide {
+        0%   { transform: translateX(0px); }
+        100% { transform: translateX(-340px); }
+      }
+
+      @keyframes volPulse {
+        0%, 100% { width: 190px; fill: #07ffea; }
+        15% { width: 235px; fill: #ffe043; }
+        45% { width: 170px; fill: #07ffea; }
+        70% { width: 215px; fill: #07ffea; }
+      }
+
+      @keyframes playPulse {
+        0%, 100% { fill: #07ffea; transform: scale(1); }
+        50% { fill: #5efff2; transform: scale(1.1); }
+      }
+
+      .record-spin { transform-origin: 192px 192px; animation: spinRecord 9s linear infinite; }
+      .beat-box { animation: neonBeat 1.25s ease-in-out infinite; }
+      .marquee-anim { animation: marqueeSlide 12s linear infinite; }
+      .vol-anim { animation: volPulse 1.25s ease-in-out infinite; }
+      .play-btn-pulse { transform-origin: 32px 48px; animation: playPulse 2.5s ease-in-out infinite; }
+    </style>
+
+    <!-- Linear Gradients -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#12141a" />
+      <stop offset="100%" stop-color="#0a0c10" />
+    </linearGradient>
+
+    <linearGradient id="pcbGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1b202a" />
+      <stop offset="100%" stop-color="#141820" />
+    </linearGradient>
+
+    <linearGradient id="vinylGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#242933" />
+      <stop offset="50%" stop-color="#14171d" />
+      <stop offset="100%" stop-color="#0c0e12" />
+    </linearGradient>
+
+    <linearGradient id="labelGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffe043" />
+      <stop offset="100%" stop-color="#d49a18" />
+    </linearGradient>
+  </defs>
+
+  <!-- Outer Background Container -->
+  <rect width="720" height="700" rx="16" fill="url(#bgGrad)" />
+  
+  <!-- Outer Card Frame -->
+  <rect x="18" y="18" width="684" height="664" rx="14" fill="#151821" stroke="#252a36" stroke-width="1.2" />
+
+  <!-- Top Title Header -->
+  <g transform="translate(42, 44)">
+    <text x="0" y="0" class="font-sans" font-size="15" font-weight="700" fill="#e6ebf2">ST7735 1.8&quot; TFT DISPLAY</text>
+    <text x="186" y="0" class="font-mono" font-size="12" fill="#07ffea">128 x 160 Portrait • Double-Buffered RAM</text>
+    
+    <!-- Badges -->
+    <rect x="510" y="-14" width="124" height="22" rx="4" fill="#0c2326" stroke="#135257" stroke-width="1" />
+    <circle cx="522" cy="-3" r="3.5" fill="#07ffea" />
+    <text x="532" y="1" class="font-mono" font-size="10" font-weight="700" fill="#07ffea">40 FPS SYNC</text>
+  </g>
+
+  <line x1="42" y1="62" x2="678" y2="62" stroke="#262b35" stroke-width="1" />
+
+  <!-- PCB Carrier Substrate -->
+  <g transform="translate(110, 80)">
+    <rect x="0" y="0" width="500" height="580" rx="12" fill="url(#pcbGrad)" stroke="#2f3747" stroke-width="1.5" />
+    
+    <!-- Mounting Holes with Copper Ground Rings -->
+    <circle cx="18" cy="18" r="8" fill="#12141a" stroke="#b38744" stroke-width="1.5" />
+    <circle cx="482" cy="18" r="8" fill="#12141a" stroke="#b38744" stroke-width="1.5" />
+    <circle cx="18" cy="562" r="8" fill="#12141a" stroke="#b38744" stroke-width="1.5" />
+    <circle cx="482" cy="562" r="8" fill="#12141a" stroke="#b38744" stroke-width="1.5" />
+
+    <!-- Top Pin Header Legend -->
+    <g transform="translate(48, 22)" class="font-mono" font-size="9" fill="#717c91">
+      <text x="0" y="0">VCC</text>
+      <text x="42" y="0">GND</text>
+      <text x="86" y="0">CS (D5)</text>
+      <text x="140" y="0">RST (D4)</text>
+      <text x="202" y="0">DC (D2)</text>
+      <text x="256" y="0">MOSI (D23)</text>
+      <text x="328" y="0">SCK (D18)</text>
+      <text x="390" y="0">LED</text>
+    </g>
+
+    <!-- Metal Screen Bezel -->
+    <rect x="46" y="38" width="408" height="504" rx="8" fill="#0b0d10" stroke="#212630" stroke-width="2" />
+    
+    <!-- Active ST7735 LCD Screen Surface (384 x 480 px -> Exact 128x160 at 3x scale) -->
+    <g transform="translate(58, 50)">
+      <rect x="0" y="0" width="384" height="480" fill="#084242" rx="4" />
+
+      <!-- ================= 1. TOP 128x128 (384x384) ALBUM ARTWORK ================= -->
+      <g>
+        <clipPath id="albumPortraitClip">
+          <rect x="0" y="0" width="384" height="384" rx="4" />
+        </clipPath>
+        
+        <g clip-path="url(#albumPortraitClip)">
+          <!-- Artwork Base -->
+          <rect x="0" y="0" width="384" height="384" fill="#0d1117" />
+
+          <!-- Vinyl Record Graphic (Procedural Retro Disc) -->
+          <g class="record-spin">
+            <circle cx="192" cy="192" r="172" fill="url(#vinylGrad)" stroke="#262d3a" stroke-width="3" />
+            <circle cx="192" cy="192" r="148" fill="#12161c" stroke="#1d222b" stroke-width="1.8" />
+            <circle cx="192" cy="192" r="124" fill="#151921" stroke="#232934" stroke-width="1.8" />
+            <circle cx="192" cy="192" r="100" fill="#13161c" stroke="#1c2028" stroke-width="1.8" />
+            <circle cx="192" cy="192" r="76"  fill="#171b24" stroke="#252b37" stroke-width="1.8" />
+            
+            <!-- Vinyl Center Spindle Label -->
+            <circle cx="192" cy="192" r="52" fill="url(#labelGrad)" stroke="#fff085" stroke-width="2" />
+            <circle cx="192" cy="192" r="14" fill="#0b0d10" />
+            
+            <!-- Groove light reflection lines -->
+            <line x1="192" y1="20" x2="192" y2="364" stroke="#485368" stroke-width="2" opacity="0.3" />
+            <line x1="20" y1="192" x2="364" y2="192" stroke="#485368" stroke-width="2" opacity="0.3" />
+          </g>
+
+          <!-- Dynamic Pulsing Neon Beat Border (Magenta & Yellow) -->
+          <rect x="3" y="3" width="378" height="378" rx="3" fill="none" class="beat-box" />
+
+          <!-- Resolution Tag Overlay -->
+          <rect x="8" y="8" width="88" height="18" rx="3" fill="#0a0d12" opacity="0.75" />
+          <text x="14" y="21" class="font-mono" font-size="9" font-weight="700" fill="#07ffea">128x128 ART</text>
+        </g>
+      </g>
+
+      <!-- ================= 2. BOTTOM 128x32 (384x96) CONTROL & INFO PANEL ================= -->
+      <g transform="translate(0, 384)">
+        <!-- Panel Background (COLOR_DARK_GRAY) -->
+        <rect x="0" y="0" width="384" height="96" fill="#181b22" />
+        
+        <!-- Top Dividing Line (COLOR_MAGENTA) -->
+        <line x1="0" y1="0" x2="384" y2="0" stroke="#f81f8f" stroke-width="2" />
+
+        <!-- A. Scrolling Song Marquee Title -->
+        <g clip-path="url(#marqueePortraitClip)">
+          <clipPath id="marqueePortraitClip">
+            <rect x="16" y="8" width="352" height="26" />
+          </clipPath>
+          <g class="marquee-anim">
+            <text x="16" y="26" class="font-sans" font-size="14" font-weight="700" fill="#ffffff">The Weeknd - Blinding Lights • After Hours • 44.1kHz • The Weeknd - Blinding Lights • After Hours</text>
+          </g>
+        </g>
+
+        <!-- Subtle Middle Separator -->
+        <line x1="16" y1="40" x2="368" y2="40" stroke="#084242" stroke-width="1.5" />
+
+        <!-- B. Status Indicator & Horizontal Volume Equalizer -->
+        <!-- Play / Pause Icon (►) -->
+        <g class="play-btn-pulse">
+          <polygon points="26,50 26,68 42,59" fill="#07ffea" />
+        </g>
+
+        <!-- Volume Equalizer Outer Frame (White 1px) -->
+        <rect x="56" y="52" width="308" height="24" rx="3" fill="#0a0d12" stroke="#ffffff" stroke-width="1.5" />
+
+        <!-- Dynamic Animated Volume Level Bar (Cyan normally, Yellow on beat) -->
+        <rect x="60" y="56" width="220" height="16" rx="2" class="vol-anim" />
+
+        <!-- Volume Readout Badge -->
+        <text x="312" y="68" class="font-mono" font-size="10" font-weight="700" fill="#ffffff">82%</text>
+      </g>
+    </g>
+  </g>
+</svg>

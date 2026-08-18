@@ -1,7 +1,7 @@
 # ESP32 Music Deskdock - Live Album Cover & Audio Visualizer
 
 <p align="center">
-  <img src="assets/deskdock_preview.svg" alt="ESP32 Music Deskdock Live Preview" width="100%" />
+  <img src="assets/deskdock_hero.gif" alt="ESP32 Music Deskdock Live Preview" width="100%" />
 </p>
 
 A real-time desktop music companion built with an **ESP32 DevKit V1** and a 1.8" ST7735 TFT display in **Portrait Mode (128x160)**. The ESP32 pairs over Wi-Fi with a Python background app running on your Windows PC. 
@@ -44,7 +44,7 @@ The Python script captures desktop audio in real time, extracts volume levels an
 ## 📺 ESP32 Display Layout & UI Architecture
 
 <p align="center">
-  <img src="assets/esp32_display_demo.svg" alt="ST7735 Display UI Portrait Demo" width="100%" />
+  <img src="assets/esp32_display_real.gif" alt="ST7735 Display UI Portrait Demo" width="100%" />
 </p>
 
 The 1.8" ST7735 display runs in **Portrait Mode (128×160 pixels)** with a custom double-buffered RAM canvas (`GFXcanvas16`):

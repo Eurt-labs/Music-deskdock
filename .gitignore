@@ -17,3 +17,5 @@ env/
 # Local generator scripts
 generate_*.py
 
+# Log files
+*.log

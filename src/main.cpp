@@ -11,22 +11,17 @@
  * Architecture & Memory Design:
  * -----------------------------
  * 1. Double-Buffered Rendering (Zero Screen Flicker):
- *    - Direct-to-screen drawing on SPI displays can cause visible tearing and flashing.
- *    - We allocate an off-screen 16-bit framebuffer canvas (`GFXcanvas16`) in ESP32 RAM:
- *      128 x 160 pixels x 2 bytes = 40,960 bytes (~40 KB).
- *    - All UI components (cover art, borders, volume bar, marquee text) are rendered
- *      in memory first, then transferred to the display in a single block write.
+ *    - Off-screen 16-bit framebuffer canvas (`GFXcanvas16`) in RAM (128x160x2 = 40.9 KB).
+ *    - All UI components rendered to canvas first, then transferred to display in one SPI burst.
  * 
  * 2. Dedicated Album Cover Buffer:
- *    - 128 x 128 pixels x 2 bytes = 32,768 bytes (~32 KB).
- *    - Stores the active raw RGB565 album artwork downloaded from the PC.
- *    - Total graphics RAM usage is ~73 KB, easily fitting within ESP32's 320 KB SRAM.
+ *    - 128x128 pixels in RGB565 format (32.7 KB in RAM).
+ *    - Direct TCP stream decoding from host HTTP server.
  * 
- * 3. Network Architecture:
- *    - UDP (Port 12345): Fast, low-latency audio telemetry reception (volume, beat, title)
- *      and bidirectional hardware button command transmission to the PC.
- *    - HTTP (Port 8080): Pulls the full 32 KB raw RGB565 bitmap from the PC host
- *      whenever the track / cover ID changes.
+ * 3. Robust Network & Telemetry Handling:
+ *    - Large 1024-byte UDP buffer to prevent JSON token truncation.
+ *    - Bidirectional Auto-Discovery: Broadcasts discovery pings so PC binds automatically.
+ *    - Safe HTTP Cover Art Fetching with failure backoff and verification.
  */
 
 #include <Arduino.h>
@@ -84,12 +79,12 @@ GFXcanvas16 canvas(128, 160);
 // Dedicated RAM buffer holding 128x128 raw RGB565 album cover pixels (32.7 KB in RAM)
 uint16_t coverBuffer[128 * 128];
 int loadedCoverID = -1;  // Tracks currently loaded cover version to avoid redundant HTTP downloads
+unsigned long lastCoverAttemptTime = 0;
 
 
 // =============================================================================
 // 16-BIT RGB565 COLOR THEME PALETTE
 // =============================================================================
-// Format: 5 bits Red (bits 11-15), 6 bits Green (bits 5-10), 5 bits Blue (bits 0-4)
 #define COLOR_BG          0x0842  // Deep dark slate background
 #define COLOR_CYAN        0x07FF  // Vibrant electric cyan
 #define COLOR_MAGENTA     0xF81F  // Neon magenta
@@ -112,21 +107,25 @@ struct AudioState {
 
 // Button debouncing & marquee animation state
 unsigned long lastBtnTime = 0;
-const unsigned long DEBOUNCE_DELAY = 220; // 220 ms debounce window to avoid false double triggers
+const unsigned long DEBOUNCE_DELAY = 220;
 int scrollPos = 0;
 unsigned long lastScrollTime = 0;
 
+// Auto-discovery beacon timer
+unsigned long lastPingTime = 0;
+
 
 // =============================================================================
-// UDP BUTTON COMMAND TRANSMITTER
+// UDP BROADCAST DISCOVERY & COMMAND TRANSMITTER
 // =============================================================================
 /**
  * Sends a JSON media control command back to the host PC over UDP.
- * 
- * Example payload: {"cmd": "playpause"}
  */
 void sendUDPCommand(const char* cmd) {
-  if (audioState.hostIP.length() == 0) return;
+  if (audioState.hostIP.length() == 0) {
+    Serial.printf("[ESP32-WARN] Cannot send '%s': Host IP unknown.\n", cmd);
+    return;
+  }
   
   JsonDocument doc;
   doc["cmd"] = cmd;
@@ -138,13 +137,37 @@ void sendUDPCommand(const char* cmd) {
   udp.write((const uint8_t*)buffer, len);
   udp.endPacket();
   
-  Serial.printf("[ESP32] Sent button command: %s to %s\n", cmd, audioState.hostIP.c_str());
+  Serial.printf("[ESP32] Sent button action '%s' to %s:%d\n", cmd, audioState.hostIP.c_str(), UDP_PORT);
 }
 
 
 /**
- * Polls the physical navigation buttons with software debouncing.
- * Sends 'prev', 'playpause', or 'next' commands to PC when buttons are pressed.
+ * Broadcasts discovery heartbeat ping on local subnet so PC host transmitter
+ * automatically detects and binds to this ESP32's IP address.
+ */
+void sendDiscoveryPing() {
+  if (WiFi.status() != WL_CONNECTED) return;
+
+  JsonDocument doc;
+  doc["cmd"] = "ping";
+  doc["dev"] = "ESP32_MusicDock";
+  doc["ip"] = WiFi.localIP().toString();
+
+  char buffer[160];
+  size_t len = serializeJson(doc, buffer);
+
+  // Broadcast to local subnet
+  IPAddress broadcastIP = ~WiFi.subnetMask() | WiFi.gatewayIP();
+  udp.beginPacket(broadcastIP, UDP_PORT);
+  udp.write((const uint8_t*)buffer, len);
+  udp.endPacket();
+
+  Serial.printf("[ESP32-DISCOVERY] Broadcast ping sent -> %s:%d\n", broadcastIP.toString().c_str(), UDP_PORT);
+}
+
+
+/**
+ * Polls physical navigation buttons with software debouncing.
  */
 void handleButtons() {
   if (millis() - lastBtnTime < DEBOUNCE_DELAY) return;
@@ -165,10 +188,6 @@ void handleButtons() {
 // =============================================================================
 // DEFAULT ALBUM ARTWORK GENERATOR
 // =============================================================================
-/**
- * Procedurally draws a retro vinyl record cover into `coverBuffer`.
- * Used on initial boot, when music is stopped, or when no online cover art is available.
- */
 void drawDefaultCover() {
   for (int y = 0; y < 128; y++) {
     for (int x = 0; x < 128; x++) {
@@ -177,17 +196,14 @@ void drawDefaultCover() {
       int distSq = dx * dx + dy * dy;
       
       if (distSq <= 12 * 12) {
-        // Gold center spindle label
         coverBuffer[y * 128 + x] = COLOR_YELLOW;
       } else if (distSq <= 50 * 50 && distSq >= 16 * 16) {
-        // Alternating concentric vinyl record grooves
         if ((int)(sqrt(distSq)) % 4 == 0) {
           coverBuffer[y * 128 + x] = 0x1082;
         } else {
           coverBuffer[y * 128 + x] = 0x0000;
         }
       } else {
-        // Outer dark background fill
         coverBuffer[y * 128 + x] = COLOR_BG;
       }
     }
@@ -198,39 +214,46 @@ void drawDefaultCover() {
 // =============================================================================
 // HTTP ALBUM ARTWORK DOWNLOADER
 // =============================================================================
-/**
- * Downloads the 32 KB raw RGB565 image from the PC HTTP server on port 8080.
- * 
- * Streams the incoming bytes directly into `coverBuffer` without intermediate
- * file system (LittleFS/SPIFFS) writes, minimizing flash wear and latency.
- */
 void fetchAlbumCover(const String& ip, int cid) {
   if (ip.length() == 0 || cid < 0) return;
-  loadedCoverID = cid;
+
+  // Rate-limit retries if server was unreachable (cooldown 3s)
+  if (millis() - lastCoverAttemptTime < 3000) return;
+  lastCoverAttemptTime = millis();
 
   HTTPClient http;
   String url = "http://" + ip + ":8080/cover.raw";
   
+  Serial.printf("[ESP32-HTTP] Fetching album cover ID %d from %s...\n", cid, url.c_str());
+
   http.begin(url);
-  http.setTimeout(1200);  // 1.2s timeout to avoid blocking frame render loops
+  http.setTimeout(1000);  // 1.0s timeout
   int httpCode = http.GET();
 
   if (httpCode == HTTP_CODE_OK) {
     WiFiClient* stream = http.getStreamPtr();
     size_t bytesRead = 0;
     uint8_t* buf = (uint8_t*)coverBuffer;
+    unsigned long fetchStart = millis();
 
-    // Read 32,768 bytes in chunks from the TCP stream
-    while (http.connected() && bytesRead < 32768) {
+    while (http.connected() && bytesRead < 32768 && (millis() - fetchStart < 1500)) {
       size_t avail = stream->available();
       if (avail > 0) {
         size_t readNow = stream->readBytes(buf + bytesRead, min(avail, (size_t)(32768 - bytesRead)));
         bytesRead += readNow;
+      } else {
+        delay(2);
       }
     }
+
     if (bytesRead == 32768) {
-      Serial.println("[ESP32] Album cover art downloaded successfully.");
+      loadedCoverID = cid;
+      Serial.printf("[ESP32-HTTP] Cover ID %d successfully loaded (32,768 bytes in %lu ms).\n", cid, millis() - fetchStart);
+    } else {
+      Serial.printf("[ESP32-HTTP-WARN] Incomplete cover download: %u/32768 bytes.\n", bytesRead);
     }
+  } else {
+    Serial.printf("[ESP32-HTTP-ERR] HTTP GET failed (Code: %d, Err: %s)\n", httpCode, http.errorToString(httpCode).c_str());
   }
   http.end();
 }
@@ -239,9 +262,6 @@ void fetchAlbumCover(const String& ip, int cid) {
 // =============================================================================
 // BOOT & DIAGNOSTIC SCREEN
 // =============================================================================
-/**
- * Renders connection status and debug info directly to the display during startup.
- */
 void drawBootScreen(const char* statusMsg) {
   tft.fillScreen(COLOR_BG);
   tft.setTextColor(COLOR_CYAN);
@@ -269,8 +289,12 @@ void drawBootScreen(const char* statusMsg) {
 // =============================================================================
 void setup() {
   Serial.begin(115200);
+  delay(200);
+  Serial.println("\n==================================================");
+  Serial.println("   ESP32 Music Visualizer & Controller Firmware   ");
+  Serial.println("==================================================");
 
-  // 1. Configure Navigation Push Buttons (Input with internal pull-up)
+  // 1. Configure Navigation Push Buttons
   pinMode(PIN_BTN_UP, INPUT_PULLUP);
   pinMode(PIN_BTN_SELECT, INPUT_PULLUP);
   pinMode(PIN_BTN_DOWN, INPUT_PULLUP);
@@ -282,19 +306,19 @@ void setup() {
 
   digitalWrite(PIN_LED_BLUE, LOW);
   digitalWrite(PIN_LED_GREEN, LOW);
-  digitalWrite(PIN_LED_RED, HIGH); // Red LED on during boot / unconnected state
+  digitalWrite(PIN_LED_RED, HIGH);
 
   // 3. Initialize default cover art graphic
   drawDefaultCover();
 
   // 4. Initialize ST7735 Display (128x160 Portrait Mode)
   tft.initR(INITR_BLACKTAB); 
-  tft.setRotation(0); // Rotation 0 = 128 width x 160 height (Portrait)
+  tft.setRotation(0);
   tft.fillScreen(COLOR_BG);
 
   drawBootScreen("Connecting Wi-Fi...");
 
-  // 5. Connect to local Wi-Fi network
+  // 5. Connect to Wi-Fi network
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
 
@@ -304,6 +328,7 @@ void setup() {
     Serial.print(".");
     retries++;
   }
+  Serial.println();
 
   if (WiFi.status() == WL_CONNECTED) {
     digitalWrite(PIN_LED_BLUE, HIGH);
@@ -311,8 +336,12 @@ void setup() {
 
     // Start UDP listener
     udp.begin(UDP_PORT);
+    Serial.printf("[ESP32] Wi-Fi Connected! IP: %s, Listening on UDP %d\n", WiFi.localIP().toString().c_str(), UDP_PORT);
 
-    // Show IP address on screen so the user knows what to enter in Python
+    // Send initial broadcast discovery ping
+    sendDiscoveryPing();
+
+    // Show IP on TFT screen
     tft.fillScreen(COLOR_BG);
     tft.setTextColor(COLOR_CYAN);
     tft.setTextSize(1);
@@ -331,7 +360,8 @@ void setup() {
     tft.println("Waiting for audio...");
     delay(1600);
   } else {
-    drawBootScreen("Wi-Fi Connection Failed!");
+    Serial.println("[ESP32-ERR] Wi-Fi Connection Failed!");
+    drawBootScreen("Wi-Fi Failed!");
     delay(3000);
   }
 
@@ -342,27 +372,16 @@ void setup() {
 // =============================================================================
 // UI FRAME RENDERING PIPELINE
 // =============================================================================
-/**
- * Composes all visual UI elements into the `canvas` double-buffer in RAM:
- * 1. Top 128x128 pixels: Album cover bitmap + dynamic beat neon borders.
- * 2. Bottom 32 pixels (Y = 128 to 159): Control & info panel:
- *    - Song title & artist scrolling marquee text.
- *    - Play/Idle status indicator & horizontal volume equalizer bar.
- * 3. LED outputs: Blue (Wi-Fi), Green (PWM Beat pulse), Red (Idle timeout).
- * 
- * Finally, transfers the complete 128x160 framebuffer to the display over SPI.
- */
 void renderFrame(uint8_t volume, bool beat, const String& songTitle, bool isConnected) {
   canvas.fillScreen(COLOR_BG);
 
-  // Watchdog: If no UDP packet arrived in >2.5s, consider playback idle/disconnected
+  // Watchdog: consider playback idle/disconnected if no packet for > 2.5s
   bool isIdle = !isConnected || (millis() - audioState.lastPacketTime > 2500);
 
   // --- LED Feedback Updates ---
   digitalWrite(PIN_LED_BLUE, isConnected ? HIGH : LOW);
   digitalWrite(PIN_LED_RED, isIdle ? HIGH : LOW);
   
-  // Pulse Green LED on music beats using PWM analog write (~20% duty cycle to prevent glare)
   if (beat && !isIdle) {
     analogWrite(PIN_LED_GREEN, 50);
   } else {
@@ -372,14 +391,12 @@ void renderFrame(uint8_t volume, bool beat, const String& songTitle, bool isConn
   // --- 1. TOP 128x128 ALBUM COVER ART ---
   if (!isIdle) {
     canvas.drawRGBBitmap(0, 0, coverBuffer, 128, 128);
-    // Draw pulsing neon frame on detected beat kicks
     if (beat) {
       canvas.drawRect(0, 0, 128, 128, COLOR_MAGENTA);
       canvas.drawRect(1, 1, 126, 126, COLOR_YELLOW);
     }
   } else {
     canvas.drawRGBBitmap(0, 0, coverBuffer, 128, 128);
-    // Draw "WAITING" badge when idle
     canvas.fillRect(15, 50, 98, 26, COLOR_BG);
     canvas.drawRect(15, 50, 98, 26, COLOR_CYAN);
     canvas.setTextColor(COLOR_YELLOW);
@@ -392,14 +409,12 @@ void renderFrame(uint8_t volume, bool beat, const String& songTitle, bool isConn
   canvas.fillRect(0, 128, 128, 32, COLOR_DARK_GRAY);
   canvas.drawFastHLine(0, 128, 128, COLOR_MAGENTA);
 
-  // Song Title Marquee String
   String title = isIdle ? "No Song Playing" : songTitle;
   if (title.length() == 0) title = "Unknown Song";
 
   const int maxCharsVisible = 19;
   String dispText = title;
 
-  // Scroll text horizontally if it exceeds visible character limit
   if (title.length() > maxCharsVisible) {
     if (millis() - lastScrollTime > 260) {
       scrollPos++;
@@ -414,29 +429,25 @@ void renderFrame(uint8_t volume, bool beat, const String& songTitle, bool isConn
     scrollPos = 0;
   }
 
-  // Display scrolling marquee text
   canvas.setTextColor(COLOR_WHITE);
   canvas.setTextSize(1);
   canvas.setCursor(6, 133);
   canvas.print(dispText);
 
-  // Subtle separator line
   canvas.drawFastHLine(4, 144, 120, COLOR_BG);
 
-  // Play / Status Indicator Symbol
   canvas.setTextColor(isIdle ? COLOR_YELLOW : COLOR_CYAN);
   canvas.setTextSize(1);
   canvas.setCursor(6, 148);
-  canvas.print((char)16); // ASCII right-pointing triangle / play symbol
+  canvas.print((char)16);
 
-  // Horizontal Audio Volume Equalizer Bar
   canvas.drawRect(18, 147, 104, 9, COLOR_WHITE);
   int barW = map(volume, 0, 100, 0, 100);
   if (barW > 0) {
     canvas.fillRect(20, 149, barW, 5, beat ? COLOR_YELLOW : COLOR_CYAN);
   }
 
-  // --- 3. FLUSH DOUBLE-BUFFER TO PHYSICAL TFT DISPLAY ---
+  // --- 3. FLUSH FRAMEBUFFER TO TFT ---
   tft.drawRGBBitmap(0, 0, canvas.getBuffer(), 128, 160);
 }
 
@@ -444,41 +455,45 @@ void renderFrame(uint8_t volume, bool beat, const String& songTitle, bool isConn
 // =============================================================================
 // UDP TELEMETRY PACKET PARSER
 // =============================================================================
-/**
- * Receives and parses incoming JSON telemetry packets from the PC.
- * 
- * Expected JSON schema:
- * {
- *   "v": 64,                     // Volume (0-100)
- *   "b": 1,                      // Beat trigger flag (0 or 1)
- *   "s": "Artist - Song Name",   // Song metadata string
- *   "cid": 3,                    // Active cover art version ID
- *   "ip": "192.168.1.100"        // Host PC IP for HTTP downloads
- * }
- */
 void processUDP() {
-  int packetSize = udp.parsePacket();
-  if (packetSize > 0) {
-    char buffer[384];
+  // Drain all pending packets to always render the freshest telemetry
+  while (true) {
+    int packetSize = udp.parsePacket();
+    if (packetSize <= 0) break;
+
+    char buffer[1024];
     int len = udp.read(buffer, sizeof(buffer) - 1);
     if (len > 0) {
       buffer[len] = '\0';
-      
+
       JsonDocument doc;
       DeserializationError err = deserializeJson(doc, buffer);
-      if (!err) {
-        audioState.volume  = doc["v"] | 0;
-        audioState.beat    = (doc["b"] | 0) == 1;
-        audioState.coverID = doc["cid"] | -1;
-        
+      if (err) {
+        Serial.printf("[ESP32-ERR] JSON parse failed: %s (Len: %d, Raw: %s)\n", err.c_str(), len, buffer);
+        continue;
+      }
+
+      // Check if this is an ACK handshake from PC
+      if (doc["cmd"] && doc["cmd"].as<String>() == "ack") {
         if (doc["ip"]) {
           audioState.hostIP = doc["ip"].as<String>();
+          Serial.printf("[ESP32-DISCOVERY] Handshake ACK received from PC at %s\n", audioState.hostIP.c_str());
         }
-        if (doc["s"]) {
-          audioState.song = doc["s"].as<String>();
-        }
-        audioState.lastPacketTime = millis();
+        continue;
       }
+
+      // Extract telemetry tokens
+      audioState.volume  = doc["v"] | 0;
+      audioState.beat    = (doc["b"] | 0) == 1;
+      audioState.coverID = doc["cid"] | -1;
+
+      if (doc["ip"]) {
+        audioState.hostIP = doc["ip"].as<String>();
+      }
+      if (doc["s"]) {
+        audioState.song = doc["s"].as<String>();
+      }
+      audioState.lastPacketTime = millis();
     }
   }
 }
@@ -488,22 +503,28 @@ void processUDP() {
 // MAIN EXECUTION LOOP
 // =============================================================================
 void loop() {
-  // 1. Process incoming audio telemetry over UDP
+  // 1. Process all incoming audio telemetry tokens over UDP
   processUDP();
 
   // 2. Poll navigation buttons and dispatch UDP actions if pressed
   handleButtons();
 
-  // 3. Check if PC reported a new album cover ID; if so, fetch over HTTP
+  // 3. Periodic Auto-Discovery Beacon when idle / searching for host
+  bool isIdle = (millis() - audioState.lastPacketTime > 2500);
+  if (isIdle && (millis() - lastPingTime > 2500)) {
+    sendDiscoveryPing();
+    lastPingTime = millis();
+  }
+
+  // 4. Check if PC reported a new album cover ID; if so, fetch over HTTP
   if (audioState.coverID != loadedCoverID && audioState.hostIP.length() > 0) {
     fetchAlbumCover(audioState.hostIP, audioState.coverID);
   }
 
-  // 4. Render updated UI frame to the display
+  // 5. Render updated UI frame to the display
   bool isConnected = (WiFi.status() == WL_CONNECTED);
   renderFrame(audioState.volume, audioState.beat, audioState.song, isConnected);
 
-  // 5. Short yield delay to feed ESP32 RTOS watchdog timer
-  delay(15);
+  // 6. Yield delay to feed ESP32 RTOS watchdog timer
+  delay(12);
 }
-

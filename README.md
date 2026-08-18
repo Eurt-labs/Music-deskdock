@@ -1,173 +1,88 @@
-# ESP32 Music Deskdock - Live Album Cover & Audio Visualizer
+# ESP32 Music Deskdock
 
 <p align="center">
-  <img src="assets/deskdock_hero.gif" alt="ESP32 Music Deskdock Live Preview" width="100%" />
+  <img src="assets/deskdock_hero.gif" alt="ESP32 Music Deskdock Preview" width="100%" />
 </p>
 
-A real-time desktop music companion built with an **ESP32 DevKit V1** and a 1.8" ST7735 TFT display in **Portrait Mode (128x160)**. The ESP32 pairs over Wi-Fi with a Python background app running on your Windows PC. 
+An ESP32-based desktop music visualizer and media controller using a 1.8" ST7735 TFT display (128x160 portrait).
 
-The Python script captures desktop audio in real time, extracts volume levels and bass beats, pulls the currently playing track's title and album art (from Spotify, YouTube, Apple Music, VLC, browser tabs, etc.), and streams the telemetry to the ESP32. The ESP32 also features 3 hardware push buttons that allow you to control playback (Play/Pause, Next, Previous) directly from your desk.
+A Python script runs in the background on your Windows PC, captures playback audio via WASAPI loopback, extracts the current song title and album art using Windows Media APIs, and streams volume levels, beat detection, and metadata to the ESP32 over Wi-Fi. The ESP32 also features 3 hardware buttons for playback control (Play/Pause, Next, Previous).
 
 ---
 
-## 🛠️ System Architecture
+## System Architecture
 
 <p align="center">
   <img src="assets/system_architecture.svg" alt="System Architecture Diagram" width="100%" />
 </p>
 
-```
-┌────────────────────────────────────────────────────────┐
-│                   Windows Host PC                      │
-│                                                        │
-│  [ WASAPI Audio Loopback ] ──► RMS Vol & FFT Bass Beat │
-│  [ Windows Media APIs    ] ──► Track Title & Cover Art │
-│                                                        │
-│  • UDP Port 12345: Sends fast volume & beat telemetry  │
-│  • UDP Port 12345: Receives button control commands    │
-│  • HTTP Port 8080: Serves raw 128x128 RGB565 cover art │
-└───────────────────────────┬────────────────────────────┘
-                            │ Wi-Fi Network
-┌───────────────────────────▼────────────────────────────┐
-│                    ESP32 DevKit V1                     │
-│                                                        │
-│  • 1.8" ST7735 Display (128x160 Portrait Double-Buffer)│
-│    - Top (128x128): Album Art + Pulsing Beat Border    │
-│    - Bottom (128x32): Song Marquee & Horizontal Vol Bar│
-│  • 3x Navigation Buttons (Previous, Play/Pause, Next)  │
-│  • 3x Status LEDs (Blue: Sync, Green: Beat, Red: Idle) │
-└────────────────────────────────────────────────────────┘
-```
+- **UDP (`12345`)**: Streams real-time audio volume, bass beats, and song title to the ESP32 (~40 FPS). Also receives button inputs from the ESP32.
+- **HTTP (`8080`)**: Serves raw 128x128 RGB565 album cover images (`/cover.raw`) when tracks change.
 
 ---
 
-## 📺 ESP32 Display Layout & UI Architecture
+## Display Layout (128x160 Portrait)
 
 <p align="center">
-  <img src="assets/esp32_display_real.gif" alt="ST7735 Display UI Portrait Demo" width="280" />
+  <img src="assets/esp32_display_real.gif" alt="ST7735 Portrait Display Demo" width="260" />
 </p>
 
-The 1.8" ST7735 display runs in **Portrait Mode (128×160 pixels)** with a custom double-buffered RAM canvas (`GFXcanvas16`):
-- **Top 128×128 Viewport**: Displays live 16-bit RGB565 album cover artwork with a dynamic pulsing neon double border (Neon Magenta outer & Gold Yellow inner) on bass kick beats.
-- **Bottom 128×32 Control & Info Panel**:
-  - **Song Title Marquee**: Smoothly scrolls long track names and artist metadata across the screen over a dark grey banner with a magenta top separator.
-  - **Play Status Indicator**: Cyan playback symbol (`►`).
-  - **Horizontal Volume Equalizer Bar**: Responsive horizontal audio level indicator inside a white frame (Cyan normally, Yellow on beat).
+- **Top (128x128)**: Displays live album artwork with a pulsing border on bass beats.
+- **Bottom (128x32)**: Horizontal scrolling song title, playback status (`►`), and volume equalizer bar.
+- **Double-Buffered RAM**: All rendering happens in a 40 KB SRAM canvas (`GFXcanvas16`) before transferring over SPI to prevent screen flicker.
 
 ---
 
-## 📁 Project Structure
+## Pinout & Wiring
 
-```text
-├── .gitignore
-├── platformio.ini               # PlatformIO build configuration
-├── requirements.txt             # Python host dependencies
-├── HARDWARE_PINOUT.md           # Pin mappings & wiring guide
-├── CUSTOMIZATION_GUIDE.md       # Display, orientation & text customization guide
-├── README.md                    # Project documentation & architecture
-├── audio_sender.py              # Windows PC WASAPI transmitter & controller
-├── assets/
-│   ├── deskdock_preview.svg     # Full deskdock hardware & live stream SVG
-│   ├── esp32_display_demo.svg   # 1:1 ST7735 128x160 portrait display SVG
-│   ├── system_architecture.svg  # End-to-end architecture pipeline diagram
-│   ├── deskdock_hero.gif        # Main hero preview animation
-│   └── esp32_display_real.gif   # Display UI emulator
-└── src/
-    └── main.cpp                 # ESP32 double-buffered firmware
-```
+| Component | Pin | ESP32 GPIO | Mode | Description |
+| :--- | :--- | :--- | :--- | :--- |
+| **ST7735 Display** | VCC | 3.3V | Power | 3.3V logic supply |
+| | GND | GND | Ground | Common ground |
+| | LED / BLK | 3.3V | Power | Backlight (connect to 3.3V) |
+| | CS | GPIO 5 (D5) | Output | SPI Chip Select |
+| | RST | GPIO 4 (D4) | Output | Display Reset |
+| | A0 / DC | GPIO 2 (D2) | Output | Data / Command Select |
+| | SDA / MOSI | GPIO 23 (D23) | SPI MOSI | Hardware VSPI Data |
+| | SCK / SCL | GPIO 18 (D18) | SPI SCK | Hardware VSPI Clock |
+| **Buttons** | Previous | GPIO 25 (D25) | `INPUT_PULLUP` | Previous Track (Active Low) |
+| | Play/Pause | GPIO 26 (D26) | `INPUT_PULLUP` | Play / Pause (Active Low) |
+| | Next | GPIO 33 (D33) | `INPUT_PULLUP` | Next Track (Active Low) |
+| **LEDs** | Blue | GPIO 12 (D12) | Output | Wi-Fi Connected & Streaming |
+| | Green | GPIO 14 (D14) | PWM Output | Beat Pulse Indicator |
+| | Red | GPIO 27 (D27) | Output | Idle / Standby |
 
----
-
-## 📌 Hardware Pin Layout
-
-| Component | Pin Function | ESP32 Pin | GPIO | Pin Mode | Description |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **ST7735 TFT Display** | VCC | 3.3V | — | Power | Display power (3.3V) |
-| | GND | GND | — | Ground | Ground |
-| | LED / BLK | 3.3V | — | Power | Backlight anode |
-| | CS | D5 | GPIO 5 | Output | SPI Chip Select |
-| | RESET | D4 | GPIO 4 | Output | Hardware Reset |
-| | A0 / DC | D2 | GPIO 2 | Output | Data / Command Selection |
-| | SDA / MOSI | D23 | GPIO 23 | Hardware SPI | VSPI MOSI line |
-| | SCK / SCL | D18 | GPIO 18 | Hardware SPI | VSPI Clock line |
-| **Physical Buttons** | UP Switch | D25 | GPIO 25 | `INPUT_PULLUP` | **Previous Track** (Active Low) |
-| | SELECT Switch | D26 | GPIO 26 | `INPUT_PULLUP` | **Play / Pause** (Active Low) |
-| | DOWN Switch | D33 | GPIO 33 | `INPUT_PULLUP` | **Next Track** (Active Low) |
-| **Status LEDs** | Blue LED | D12 | GPIO 12 | Output | Wi-Fi Connected & Streaming |
-| | Green LED | D14 | GPIO 14 | PWM Output | Beat Pulse Indicator (Dimmed PWM) |
-| | Red LED | D27 | GPIO 27 | Output | Idle / Disconnected / Paused |
-
-For detailed electrical notes, see [HARDWARE_PINOUT.md](file:///c:/Users/Dhruv%20Saraswat/Documents/Projects/MUSIC/HARDWARE_PINOUT.md).
+Detailed wiring notes can be found in [HARDWARE_PINOUT.md](HARDWARE_PINOUT.md).
 
 ---
 
-## ⚙️ Network & Ports Configuration
+## Quick Start
 
-- **UDP Port (`12345`)**: Used for high-speed, low-latency audio telemetry (volume, beat trigger, song title) and for receiving button commands from the ESP32.
-- **HTTP Port (`8080`)**: A lightweight Python HTTP server that serves the raw 32 KB RGB565 album cover image (`/cover.raw`) when a song changes.
+### 1. Flash the ESP32 Firmware
+1. Open `src/main.cpp` and set your Wi-Fi credentials:
+   ```cpp
+   const char* ssid     = "YOUR_WIFI_SSID";
+   const char* password = "YOUR_WIFI_PASSWORD";
+   ```
+2. Build and upload using PlatformIO:
+   ```bash
+   pio run --target upload
+   ```
+3. Open serial monitor (`pio device monitor`) to get the ESP32's local IP address (e.g. `192.168.1.51`).
 
----
-
-## 🚀 Setup & Getting Started
-
-### 1. Prerequisites & PlatformIO (PIO) Installation
-
-You will need **PlatformIO** to compile and upload the ESP32 firmware. You can install it using either method:
-
-#### Option A: Via VS Code (Recommended)
-1. Open **Visual Studio Code**.
-2. Open the Extensions tab (`Ctrl+Shift+X` on Windows/Linux or `Cmd+Shift+X` on macOS).
-3. Search for **PlatformIO IDE** and click **Install**.
-4. Restart VS Code once installation finishes.
-
-#### Option B: Via PlatformIO Core (CLI)
-Install the standalone CLI using Python's package manager:
-```bash
-pip install -U platformio
-```
-
-Verify your installation by checking the version:
-```bash
-pio --version
-```
-
-### 2. Configure Wi-Fi Credentials
-Open [src/main.cpp](file:///c:/Users/Dhruv%20Saraswat/Documents/Projects/MUSIC/src/main.cpp#L45-L46) and update your Wi-Fi SSID and password:
-```cpp
-const char* ssid     = "YOUR_WIFI_SSID";
-const char* password = "YOUR_WIFI_PASSWORD";
-```
-
-### 3. Upload ESP32 Firmware
-Connect your ESP32 board via USB, then build and flash using PlatformIO:
-```bash
-pio run --target upload
-```
-Open the serial monitor (115200 baud) to monitor boot logs:
-```bash
-pio device monitor
-```
-Once connected, the ESP32 display will show its assigned IP address on your local network (e.g., `192.168.1.51`).
-
-### 4. Install PC Python Dependencies
-Install the required Python packages on your Windows PC:
-```bash
-pip install -r requirements.txt
-```
-
-### 5. Run the Python Audio Transmitter
-Start playing music on your PC (Spotify, YouTube, VLC, browser, etc.), then start the script:
-```bash
-python audio_sender.py
-```
-When prompted, enter the IP address shown on the ESP32 screen. The script will automatically start capturing loopback audio, detecting beats, fetching album art, and listening for button presses.
+### 2. Run the PC Transmitter
+1. Install Python dependencies on Windows:
+   ```bash
+   pip install -r requirements.txt
+   ```
+2. Start the script:
+   ```bash
+   python audio_sender.py
+   ```
+3. Enter the ESP32 IP address when prompted. Play music in Spotify, YouTube, VLC, or your browser.
 
 ---
 
-## 🔍 Troubleshooting Tips
+## Customization
 
-- **Windows Firewall**: When running `audio_sender.py` for the first time, Windows may ask for permission to allow Python to communicate on private networks. Allow access so the ESP32 can send UDP button commands and fetch album art over HTTP.
-- **No Album Cover / Title**: Make sure the media player supports Windows System Media Transport Controls (Spotify, Chrome, Edge, and modern media players support this natively). If not supported, the system defaults to a retro vinyl disc graphic.
-- **Audio Capture Device**: The script defaults to your primary Windows playback device via WASAPI loopback. If no sound is detected, ensure audio is actively playing through your default speakers/headphones.
-
-
+To change display orientation, on-screen text, RGB565 theme colors, or animation speeds, see **[CUSTOMIZATION_GUIDE.md](CUSTOMIZATION_GUIDE.md)**.

@@ -1,0 +1,16 @@
+# Audio capture from Windows desktop (WASAPI loopback)
+soundcard>=0.4.6
+
+# Windows Media Transport Controls API (to read song title, artist, and album thumbnail)
+winrt-Windows.Media.Control>=3.2.1
+winrt-Windows.Foundation>=3.2.1
+
+# Numeric processing for FFT frequency analysis, RMS volume, and RGB565 byte conversions
+numpy>=1.24.0
+
+# Image processing to resize and prepare album cover thumbnails for ST7735 display
+Pillow>=9.0.0
+
+# Optional terminal formatting utilities
+colorama>=0.4.6
+
